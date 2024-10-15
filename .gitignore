@@ -1,0 +1,182 @@
+# ===========================================
+# Al-Masjid Al-Kareem Islamic Companion
+# Comprehensive .gitignore
+# ===========================================
+
+# ===== PYTHON =====
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# ===== VIRTUAL ENVIRONMENTS =====
+.venv/
+venv/
+ENV/
+env/
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ===== DATABASE FILES =====
+*.db
+*.sqlite3
+*.sqlite
+instance/
+backend/instance/
+
+# ===== NODE.JS / FRONTEND =====
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# ===== FRONTEND BUILD =====
+dist/
+build/
+.next/
+out/
+.nuxt/
+.vuepress/dist/
+.serverless/
+.fusebox/
+.dynamodb/
+.tern-port
+
+# ===== AUDIO FILES - LARGE SURAH RECITATIONS =====
+# These files are too large for Git repositories
+Surahs/
+**/*.mp3
+**/*.MP3
+**/*.wav
+**/*.WAV
+**/*.flac
+**/*.FLAC
+**/*.m4a
+**/*.M4A
+**/*.aac
+**/*.AAC
+
+# ===== DOCUMENT FILES - LARGE HADITH PDFs =====
+# These files are too large for Git repositories
+Hadith/
+**/*.pdf
+**/*.PDF
+**/*.doc
+**/*.DOC
+**/*.docx
+**/*.DOCX
+
+# ===== IDE & EDITORS =====
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+*.sublime-project
+
+# ===== OPERATING SYSTEM =====
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# ===== LOGS =====
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.npm
+.eslintcache
+
+# ===== TEMPORARY FILES =====
+*.tmp
+*.temp
+*.bak
+*.backup
+*.old
+*.orig
+*~
+
+# ===== CACHE DIRECTORIES =====
+.cache/
+.parcel-cache/
+.sass-cache/
+.stylelintcache
+
+# ===== COVERAGE REPORTS =====
+coverage/
+*.lcov
+.coverage
+.pytest_cache/
+.coverage.*
+
+# ===== JUPYTER NOTEBOOKS =====
+.ipynb_checkpoints/
+
+# ===== CONFIGURATION FILES WITH SECRETS =====
+config/secrets.py
+config/local.py
+.secrets
+secrets.json
+credentials.json
+
+# ===== DEPLOYMENT FILES =====
+.deploy/
+.deployments/
+.azure/
+.vercel/
+.netlify/
+
+# ===== DOCKER =====
+.docker/
+docker-compose.override.yml
+
+# ===== MISC =====
+.vite/
+.turbo/
+tsconfig.tsbuildinfo
+
+# ===== GIT HISTORY SCRIPTS (NEVER PUSH) =====
+Create-GitHistory.ps1
+*GitHistory*.ps1
+*git-history*
+*commit-script*
+Check-Status.ps1
