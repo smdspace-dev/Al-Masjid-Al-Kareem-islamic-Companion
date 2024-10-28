@@ -1,0 +1,52 @@
+{
+  "name": "muslim-lifestyle-frontend",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Ancient Rich Islamic Companion - React Frontend",
+  "private": true,
+  "dependencies": {
+    "@heroicons/react": "^2.0.18",
+    "axios": "^1.5.0",
+    "js-cookie": "^3.0.5",
+    "leaflet": "^1.9.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hook-form": "^7.45.4",
+    "react-leaflet": "^4.2.1",
+    "react-router-dom": "^6.15.0"
+  },
+  "devDependencies": {
+    "@babel/preset-react": "^7.27.1",
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "@vitejs/plugin-react": "^4.0.3",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.17",
+    "vite": "^4.4.5"
+  },
+  "scripts": {
+    "dev": "vite --host",
+    "build": "vite build",
+    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
