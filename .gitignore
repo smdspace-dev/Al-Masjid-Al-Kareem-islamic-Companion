@@ -180,3 +180,7 @@ Create-GitHistory.ps1
 *git-history*
 *commit-script*
 Check-Status.ps1
+Get-Status.ps1
+Update-Repo.ps1
+# ===========================================
+RENDER_DEPLYMENT.md

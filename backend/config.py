@@ -7,8 +7,17 @@ class Config:
     # Basic Flask config
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'ancient-rich-islamic-app-secret-key-2025'
 
-    # Database configuration
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///muslim_lifestyle.db'
+    # Database configuration - Compatible with both local and Render
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    
+    if os.environ.get('RENDER'):
+        # Production on Render - use DATABASE_URL if provided, otherwise SQLite in current directory
+        SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///muslim_lifestyle.db'
+    else:
+        # Local development - use the existing instance folder
+        instance_path = os.path.join(basedir, "instance", "muslim_lifestyle.db")
+        SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or f'sqlite:///{instance_path}'
+    
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = False
 

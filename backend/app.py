@@ -20,7 +20,24 @@ app.config.from_object(Config)
 
 # Initialize extensions with app
 db.init_app(app)
-cors.init_app(app, origins=["http://localhost:3000", "http://127.0.0.1:3000", "http://localhost:3001", "http://127.0.0.1:3001"])
+
+# CORS configuration - Allow both local and production origins
+if os.environ.get('RENDER'):
+    # Production CORS - Update with your actual Render frontend URL
+    cors.init_app(app, origins=[
+        "https://*.onrender.com",
+        "http://localhost:3000", 
+        "http://127.0.0.1:3000"
+    ])
+else:
+    # Development CORS
+    cors.init_app(app, origins=[
+        "http://localhost:3000", 
+        "http://127.0.0.1:3000", 
+        "http://localhost:3001", 
+        "http://127.0.0.1:3001"
+    ])
+
 jwt.init_app(app)
 
 # Import models after extensions initialization
@@ -113,6 +130,13 @@ def internal_error(error):
 
 def create_tables():
     """Create database tables"""
+    # Ensure instance directory exists for local development
+    if not os.environ.get('RENDER'):
+        instance_dir = os.path.join(os.path.dirname(__file__), 'instance')
+        if not os.path.exists(instance_dir):
+            os.makedirs(instance_dir)
+            print("📁 Created instance directory for database")
+    
     with app.app_context():
         db.create_all()
         print("✅ Database tables created successfully!")
@@ -146,5 +170,11 @@ if __name__ == '__main__':
     print("🌟 Ancient Rich Theme - Classical Islamic Companion")
     print("📊 Database: SQLite (development)")
     print("🔑 Default admin: admin / admin123")
-    print("🏛️  Server starting on http://127.0.0.1:5000")
-    app.run(debug=True, host='127.0.0.1', port=5000)
+    
+    # Get port from environment variable (Render) or default to 5000 (local)
+    port = int(os.environ.get('PORT', 5000))
+    host = '0.0.0.0' if os.environ.get('RENDER') else '127.0.0.1'
+    debug = not bool(os.environ.get('RENDER'))
+    
+    print(f"🏛️  Server starting on http://{host}:{port}")
+    app.run(debug=debug, host=host, port=port)

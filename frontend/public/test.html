@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Muslim App Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #8B4513;
+            text-align: center;
+        }
+        button {
+            background-color: #D4AF37;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+        pre {
+            background-color: #f8f8f8;
+            padding: 10px;
+            border-radius: 4px;
+            overflow: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Al-Masjid Al-Kareem Test Page</h1>
+        
+        <div>
+            <h2>Backend Status</h2>
+            <button id="testBackend">Test Backend Connection</button>
+            <pre id="backendResult">Click button to test...</pre>
+        </div>
+
+        <div>
+            <h2>Frontend Routing Test</h2>
+            <button id="testRouting">Test React Router</button>
+            <pre id="routingResult">Click button to test...</pre>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('testBackend').addEventListener('click', async () => {
+            const result = document.getElementById('backendResult');
+            result.textContent = 'Testing connection to backend...';
+            
+            try {
+                const response = await fetch('/api/health');
+                const data = await response.json();
+                result.textContent = 'Success! Backend responded: ' + JSON.stringify(data, null, 2);
+            } catch (error) {
+                result.textContent = 'Error: ' + error.message;
+            }
+        });
+
+        document.getElementById('testRouting').addEventListener('click', async () => {
+            const result = document.getElementById('routingResult');
+            result.textContent = 'Checking if React app is loaded...';
+            
+            if (window.location.pathname === '/test.html') {
+                result.textContent = 'You are viewing the test HTML file directly.\n' + 
+                                    'Try going to the root URL: ' + 
+                                    window.location.protocol + '//' + 
+                                    window.location.host + '/';
+            } else {
+                if (window.React) {
+                    result.textContent = 'React is loaded! The app should be working.';
+                } else {
+                    result.textContent = 'React is not detected. The app may not be loading correctly.';
+                }
+            }
+        });
+    </script>
+</body>
+</html>

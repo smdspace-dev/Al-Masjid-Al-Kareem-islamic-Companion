@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>React App Debug Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .success { color: green; }
+        .error { color: red; }
+        pre { 
+            background: #f4f4f4; 
+            padding: 10px; 
+            border-radius: 5px;
+            white-space: pre-wrap;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>React App Debug Test</h1>
+        
+        <h2>1. Check Browser Console</h2>
+        <p>Open your browser's developer tools (F12) and check for errors in the console.</p>
+        <button onclick="checkConsole()">Check Console</button>
+        <div id="console-result"></div>
+
+        <h2>2. Check Backend Connectivity</h2>
+        <button onclick="checkBackend()">Test Backend</button>
+        <div id="backend-result">Results will appear here...</div>
+        
+        <h2>3. Check React App Loading</h2>
+        <button onclick="checkReactApp()">Test React App</button>
+        <div id="react-result">Results will appear here...</div>
+
+        <h2>4. Debug Information</h2>
+        <table>
+            <tr>
+                <th>Item</th>
+                <th>Value</th>
+            </tr>
+            <tr>
+                <td>User Agent</td>
+                <td id="user-agent"></td>
+            </tr>
+            <tr>
+                <td>URL</td>
+                <td id="current-url"></td>
+            </tr>
+            <tr>
+                <td>Frontend Status</td>
+                <td id="frontend-status">Checking...</td>
+            </tr>
+            <tr>
+                <td>Backend Status</td>
+                <td id="backend-status">Checking...</td>
+            </tr>
+        </table>
+    </div>
+
+    <script>
+        // Display basic information
+        document.getElementById('user-agent').textContent = navigator.userAgent;
+        document.getElementById('current-url').textContent = window.location.href;
+
+        // Function to check console
+        function checkConsole() {
+            const resultDiv = document.getElementById('console-result');
+            resultDiv.innerHTML = `
+                <p>Check your browser console (F12) for any errors.</p>
+                <p>Common React errors:</p>
+                <ul>
+                    <li>Failed to compile - Syntax errors in React code</li>
+                    <li>Error loading module - Missing or incorrect imports</li>
+                    <li>React not defined - React not properly imported</li>
+                    <li>White screen - React app failed to render</li>
+                </ul>
+            `;
+            
+            // Test console
+            console.log("Debug test - If you can see this, console logging works");
+        }
+
+        // Check backend connectivity
+        function checkBackend() {
+            const resultDiv = document.getElementById('backend-result');
+            resultDiv.innerHTML = '<p>Testing connection to backend...</p>';
+            
+            fetch('http://localhost:5000/api/health')
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                    throw new Error(`Status: ${response.status}`);
+                })
+                .then(data => {
+                    resultDiv.innerHTML = `<p class="success">✅ Backend connection successful!</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>`;
+                    document.getElementById('backend-status').innerHTML = '<span style="color:green">✅ Connected</span>';
+                })
+                .catch(error => {
+                    resultDiv.innerHTML = `<p class="error">❌ Failed to connect to backend: ${error.message}</p>
+                        <p>Make sure the Flask server is running on port 5000</p>`;
+                    document.getElementById('backend-status').innerHTML = '<span style="color:red">❌ Not Connected</span>';
+                });
+        }
+
+        // Check React app loading
+        function checkReactApp() {
+            const resultDiv = document.getElementById('react-result');
+            resultDiv.innerHTML = '<p>Testing React app loading...</p>';
+            
+            fetch('http://localhost:3000/')
+                .then(response => {
+                    if (response.ok) {
+                        return response.text();
+                    }
+                    throw new Error(`Status: ${response.status}`);
+                })
+                .then(html => {
+                    // Check if the response contains React root elements
+                    const hasRootElement = html.includes('id="root"');
+                    const hasReactScript = html.includes('main.jsx');
+                    
+                    if (hasRootElement && hasReactScript) {
+                        resultDiv.innerHTML = `<p class="success">✅ React app HTML structure looks good!</p>
+                            <p>The page contains a root element and React scripts.</p>`;
+                        document.getElementById('frontend-status').innerHTML = '<span style="color:green">✅ Structure OK</span>';
+                    } else {
+                        resultDiv.innerHTML = `<p class="error">⚠️ React app structure might have issues.</p>
+                            <p>Root element: ${hasRootElement ? '✅ Found' : '❌ Not found'}</p>
+                            <p>React script: ${hasReactScript ? '✅ Found' : '❌ Not found'}</p>`;
+                        document.getElementById('frontend-status').innerHTML = '<span style="color:orange">⚠️ Check structure</span>';
+                    }
+                })
+                .catch(error => {
+                    resultDiv.innerHTML = `<p class="error">❌ Failed to connect to React app: ${error.message}</p>
+                        <p>Make sure the Vite dev server is running on port 3000</p>`;
+                    document.getElementById('frontend-status').innerHTML = '<span style="color:red">❌ Not Connected</span>';
+                });
+        }
+        
+        // Automatically run tests on load
+        window.onload = function() {
+            checkBackend();
+            checkReactApp();
+        };
+    </script>
+</body>
+</html>

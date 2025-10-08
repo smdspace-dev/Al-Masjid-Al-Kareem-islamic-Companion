@@ -1,0 +1,73 @@
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import { resolve } from 'path';
+import fs from 'fs';
+import path from 'path';
+
+// Function to ensure directories exist
+function ensureDirectoriesExist() {
+  const distDir = path.resolve(__dirname, 'dist');
+  if (!fs.existsSync(distDir)) {
+    fs.mkdirSync(distDir, { recursive: true });
+  }
+}
+
+// Create a 404.html that redirects to index.html for client-side routing
+function createRedirectFiles() {
+  ensureDirectoriesExist();
+  const redirectHtml = `
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Muslim Lifestyle App</title>
+    <script>
+      // Redirect to the root URL which will load the React app
+      sessionStorage.setItem('redirectPath', window.location.pathname);
+      window.location.href = '/';
+    </script>
+  </head>
+  <body>
+    <p>Redirecting to the Muslim Lifestyle App...</p>
+  </body>
+</html>
+  `.trim();
+  
+  fs.writeFileSync(path.resolve(__dirname, 'public/404.html'), redirectHtml);
+}
+
+// Create redirect files before build
+createRedirectFiles();
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [react()],
+  resolve: {
+    alias: {
+      '@': resolve(__dirname, 'src'),
+    },
+  },
+  server: {
+    port: 3000,
+    strictPort: true,
+    open: true,
+    proxy: {
+      '/api': {
+        target: 'http://127.0.0.1:5000',
+        changeOrigin: true,
+        secure: false
+      }
+    }
+  },
+  build: {
+    outDir: 'dist',
+    sourcemap: true,
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'index.html'),
+        // Include 404.html for client-side routing support
+        notFound: resolve(__dirname, 'public/404.html')
+      }
+    }
+  }
+});

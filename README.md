@@ -348,16 +348,34 @@ The application is fully responsive with:
 
 ## 🚀 Deployment Options
 
-### Local Development
+### 🌐 Deploy to Render (Free)
+
+The easiest way to deploy your Muslim Companion app online:
+
+```bash
+# See detailed deployment guide
+cat RENDER_DEPLOYMENT.md
+```
+
+**Quick Deploy Steps:**
+1. **Backend**: Create Web Service on Render with `backend/` folder
+2. **Frontend**: Create Static Site on Render with `frontend/` folder  
+3. **Environment**: Set `REACT_APP_API_URL` to your backend URL
+
+**Live URLs after deployment:**
+- Frontend: `https://your-app.onrender.com`
+- Backend: `https://your-backend.onrender.com`
+
+### 🏠 Local Development
 - Built-in Flask development server
 - Vite development server with hot reload
 - SQLite database for quick setup
 
-### Production Deployment
-- **Backend**: Gunicorn + Nginx
+### 🌟 Production Deployment
+- **Backend**: Gunicorn + any hosting provider
 - **Frontend**: Static build files
-- **Database**: PostgreSQL
-- **Cloud**: AWS, Google Cloud, DigitalOcean
+- **Database**: SQLite (demo) or PostgreSQL (production)
+- **Cloud**: Render, AWS, Google Cloud, DigitalOcean
 
 ## 🤝 Contributing
 

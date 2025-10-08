@@ -1,7 +1,17 @@
 import axios from 'axios'
 
-// Set base URL for API calls - use '/api' for Vite proxy
-const API_BASE_URL = '/api'
+// Set base URL for API calls - Environment aware
+const getApiBaseUrl = () => {
+  // Check if we're in production (Render or other hosting)
+  if (process.env.NODE_ENV === 'production') {
+    return process.env.REACT_APP_API_URL || 'https://your-backend.onrender.com'
+  }
+  
+  // Development environment
+  return process.env.REACT_APP_API_URL || 'http://localhost:5000'
+}
+
+const API_BASE_URL = getApiBaseUrl()
 
 // Create axios instance with better error handling
 const api = axios.create({

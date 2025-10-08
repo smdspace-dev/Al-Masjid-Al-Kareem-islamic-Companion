@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test All Fixes</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 20px; 
+            background: #1a1a1a; 
+            color: white; 
+        }
+        .test-section { 
+            margin: 20px 0; 
+            padding: 15px; 
+            border: 1px solid #333; 
+            border-radius: 8px; 
+            background: #2a2a2a; 
+        }
+        .success { border-color: #22c55e; background: #064e3b; }
+        .error { border-color: #ef4444; background: #7f1d1d; }
+        button { 
+            padding: 10px 15px; 
+            margin: 5px; 
+            border: none; 
+            border-radius: 5px; 
+            background: #3b82f6; 
+            color: white; 
+            cursor: pointer; 
+        }
+        button:hover { background: #2563eb; }
+        .result { 
+            margin-top: 10px; 
+            padding: 10px; 
+            background: #1a1a1a; 
+            border-radius: 5px; 
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Fix Verification Dashboard</h1>
+    
+    <div class="test-section">
+        <h2>1. 🕌 Hadith API Test</h2>
+        <button onclick="testHadith()">Test Hadith Collections</button>
+        <button onclick="testRandomHadith()">Test Random Hadith</button>
+        <div id="hadithResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. 📖 Para/Quran Test</h2>
+        <button onclick="testPara29()">Test Para 29 Surahs</button>
+        <button onclick="testPara30()">Test Para 30 Surahs</button>
+        <div id="quranResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. 🧭 Qibla Direction Test</h2>
+        <button onclick="testQibla()">Test Qibla Calculation</button>
+        <div id="qiblaResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>4. 👑 Admin Access Test</h2>
+        <button onclick="testAdminLogin()">Test Admin Login</button>
+        <button onclick="testAdminDashboard()">Test Admin Dashboard</button>
+        <div id="adminResult" class="result"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://127.0.0.1:5000/api';
+
+        async function testHadith() {
+            const resultDiv = document.getElementById('hadithResult');
+            try {
+                // Test collections
+                const collectionsRes = await fetch(`${API_BASE}/hadith/collections`);
+                const collections = await collectionsRes.json();
+                
+                // Test specific collection
+                const hadithRes = await fetch(`${API_BASE}/hadith/collections/bukhari/hadith?limit=5`);
+                const hadith = await hadithRes.json();
+                
+                resultDiv.innerHTML = `
+                    <strong>✅ Collections:</strong> ${collections.collections?.length || 0} found<br>
+                    <strong>✅ Hadith Count:</strong> ${hadith.hadith?.length || 0} hadith loaded<br>
+                    <strong>Sample:</strong> ${hadith.hadith?.[0]?.english?.substring(0, 100) || 'No hadith'}...
+                `;
+                resultDiv.parentElement.className = 'test-section success';
+            } catch (error) {
+                resultDiv.innerHTML = `❌ Error: ${error.message}`;
+                resultDiv.parentElement.className = 'test-section error';
+            }
+        }
+
+        async function testRandomHadith() {
+            const resultDiv = document.getElementById('hadithResult');
+            try {
+                const res = await fetch(`${API_BASE}/hadith/random`);
+                const data = await res.json();
+                
+                resultDiv.innerHTML += `<br><strong>✅ Random Hadith:</strong> ${data.hadith?.english?.substring(0, 100) || 'No hadith'}...`;
+            } catch (error) {
+                resultDiv.innerHTML += `<br>❌ Random Hadith Error: ${error.message}`;
+            }
+        }
+
+        async function testPara29() {
+            const resultDiv = document.getElementById('quranResult');
+            try {
+                const res = await fetch(`${API_BASE}/quran/para/29/surahs`);
+                const data = await res.json();
+                
+                const surahNumbers = data.surahs?.map(s => s.id || s.number) || [];
+                resultDiv.innerHTML = `
+                    <strong>✅ Para 29 Surahs:</strong> ${data.surahs?.length || 0} surahs<br>
+                    <strong>Numbers:</strong> ${surahNumbers.join(', ')}<br>
+                    <strong>Expected:</strong> 67-77 (Al-Mulk to Al-Mursalat)
+                `;
+                resultDiv.parentElement.className = 'test-section success';
+            } catch (error) {
+                resultDiv.innerHTML = `❌ Error: ${error.message}`;
+                resultDiv.parentElement.className = 'test-section error';
+            }
+        }
+
+        async function testPara30() {
+            const resultDiv = document.getElementById('quranResult');
+            try {
+                const res = await fetch(`${API_BASE}/quran/para/30/surahs`);
+                const data = await res.json();
+                
+                const surahNumbers = data.surahs?.map(s => s.id || s.number) || [];
+                resultDiv.innerHTML += `<br>
+                    <strong>✅ Para 30 Surahs:</strong> ${data.surahs?.length || 0} surahs<br>
+                    <strong>Numbers:</strong> ${surahNumbers.slice(0, 10).join(', ')}... (showing first 10)<br>
+                    <strong>Expected:</strong> 78-114 (An-Naba to An-Nas) = 37 surahs
+                `;
+            } catch (error) {
+                resultDiv.innerHTML += `<br>❌ Para 30 Error: ${error.message}`;
+            }
+        }
+
+        async function testQibla() {
+            const resultDiv = document.getElementById('qiblaResult');
+            try {
+                // Test with Delhi coordinates
+                const lat = 28.6139, lng = 77.2090;
+                const res = await fetch(`${API_BASE}/prayer/qibla?lat=${lat}&lng=${lng}`);
+                const data = await res.json();
+                
+                resultDiv.innerHTML = `
+                    <strong>✅ Qibla Calculation:</strong><br>
+                    <strong>Location:</strong> Delhi (${lat}, ${lng})<br>
+                    <strong>Qibla Bearing:</strong> ${data.qibla_bearing}° (Expected: ~270°)<br>
+                    <strong>Distance to Kaaba:</strong> ${data.distance_km} km<br>
+                    <strong>Direction:</strong> West-Southwest from India
+                `;
+                resultDiv.parentElement.className = 'test-section success';
+            } catch (error) {
+                resultDiv.innerHTML = `❌ Error: ${error.message}`;
+                resultDiv.parentElement.className = 'test-section error';
+            }
+        }
+
+        async function testAdminLogin() {
+            const resultDiv = document.getElementById('adminResult');
+            try {
+                const res = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: 'admin', password: 'admin123' })
+                });
+                const data = await res.json();
+                
+                if (data.access_token) {
+                    localStorage.setItem('auth_token', data.access_token);
+                    resultDiv.innerHTML = `
+                        <strong>✅ Admin Login:</strong> Success<br>
+                        <strong>User:</strong> ${data.user?.username}<br>
+                        <strong>Role:</strong> ${data.user?.role}<br>
+                        <strong>Token:</strong> ${data.access_token.substring(0, 20)}...
+                    `;
+                    resultDiv.parentElement.className = 'test-section success';
+                } else {
+                    throw new Error('No token received');
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `❌ Login Error: ${error.message}`;
+                resultDiv.parentElement.className = 'test-section error';
+            }
+        }
+
+        async function testAdminDashboard() {
+            const resultDiv = document.getElementById('adminResult');
+            try {
+                const token = localStorage.getItem('auth_token');
+                if (!token) {
+                    throw new Error('No auth token. Please login first.');
+                }
+
+                const res = await fetch(`${API_BASE}/admin/dashboard`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                
+                resultDiv.innerHTML += `<br>
+                    <strong>✅ Admin Dashboard:</strong> Access granted<br>
+                    <strong>Total Users:</strong> ${data.statistics?.total_users || 0}<br>
+                    <strong>Active Users:</strong> ${data.statistics?.active_users || 0}
+                `;
+            } catch (error) {
+                resultDiv.innerHTML += `<br>❌ Dashboard Error: ${error.message}`;
+            }
+        }
+
+        // Auto-run tests on page load
+        window.onload = function() {
+            setTimeout(() => {
+                testHadith();
+                testPara29();
+                testPara30();
+                testQibla();
+            }, 1000);
+        };
+    </script>
+</body>
+</html>
