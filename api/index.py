@@ -1,10 +1,13 @@
 # Vercel Serverless Entry Point for Muslim Companion Backend
-from backend.app import app
+import os
+import sys
 
-# Vercel serverless handler
-def handler(request, response):
-    return app(request, response)
+# Add current directory to Python path for imports
+current_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, current_dir)
 
-# For Vercel deployment
-if __name__ == "__main__":
-    app.run(debug=False)
+# Import the Flask app
+from app import app
+
+# This is required for Vercel to detect the app
+# The variable name must be 'app' for Vercel Python runtime

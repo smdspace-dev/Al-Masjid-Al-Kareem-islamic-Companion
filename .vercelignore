@@ -1,0 +1,41 @@
+# Vercel ignore file for Muslim Companion App
+
+# Backend files (already copied to api/)
+backend/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Frontend source (dist will be built)
+frontend/src/
+frontend/public/
+frontend/node_modules/
+
+# Development files
+.venv/
+.env
+.env.local
+*.log
+
+# Audio files (too large for deployment)
+Surahs/
+
+# Documentation and scripts
+*.md
+*.ps1
+*.sh
+
+# Git and IDE
+.git/
+.vscode/
+.idea/
+
+# Test files
+*test*
+*Test*
+*debug*
+
+# Database files
+*.db
+instance/
