@@ -2,13 +2,23 @@ import axios from 'axios'
 
 // Set base URL for API calls - Environment aware
 const getApiBaseUrl = () => {
-  // Check if we're in production (Render or other hosting)
+  // Check if we have an explicit API URL set
+  if (process.env.REACT_APP_API_URL) {
+    return process.env.REACT_APP_API_URL
+  }
+  
+  // Check if we're in production
   if (process.env.NODE_ENV === 'production') {
-    return process.env.REACT_APP_API_URL || 'https://your-backend.onrender.com'
+    // Check if we're on Vercel
+    if (window.location.hostname.includes('vercel.app')) {
+      return `${window.location.origin}/api`
+    }
+    // Default production URL (Render or other)
+    return 'https://your-backend.onrender.com'
   }
   
   // Development environment
-  return process.env.REACT_APP_API_URL || 'http://localhost:5000'
+  return 'http://localhost:5000'
 }
 
 const API_BASE_URL = getApiBaseUrl()

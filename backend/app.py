@@ -21,8 +21,16 @@ app.config.from_object(Config)
 # Initialize extensions with app
 db.init_app(app)
 
-# CORS configuration - Allow both local and production origins
-if os.environ.get('RENDER'):
+# CORS configuration - Allow local, Render, and Vercel origins
+if os.environ.get('VERCEL'):
+    # Vercel deployment CORS
+    cors.init_app(app, origins=[
+        "https://*.vercel.app",
+        "https://muslim-companion.vercel.app",
+        "http://localhost:3000", 
+        "http://127.0.0.1:3000"
+    ])
+elif os.environ.get('RENDER'):
     # Production CORS - Update with your actual Render frontend URL
     cors.init_app(app, origins=[
         "https://*.onrender.com",
@@ -131,11 +139,16 @@ def internal_error(error):
 def create_tables():
     """Create database tables"""
     # Ensure instance directory exists for local development
-    if not os.environ.get('RENDER'):
+    if not os.environ.get('RENDER') and not os.environ.get('VERCEL'):
         instance_dir = os.path.join(os.path.dirname(__file__), 'instance')
         if not os.path.exists(instance_dir):
             os.makedirs(instance_dir)
             print("📁 Created instance directory for database")
+    
+    # For Vercel, ensure /tmp directory access
+    if os.environ.get('VERCEL'):
+        import tempfile
+        os.makedirs('/tmp', exist_ok=True)
     
     with app.app_context():
         db.create_all()

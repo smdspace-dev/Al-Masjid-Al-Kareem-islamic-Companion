@@ -7,10 +7,13 @@ class Config:
     # Basic Flask config
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'ancient-rich-islamic-app-secret-key-2025'
 
-    # Database configuration - Compatible with both local and Render
+    # Database configuration - Compatible with local, Render, and Vercel
     basedir = os.path.abspath(os.path.dirname(__file__))
     
-    if os.environ.get('RENDER'):
+    if os.environ.get('VERCEL'):
+        # Vercel serverless - use temporary SQLite or environment database
+        SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:////tmp/muslim_lifestyle.db'
+    elif os.environ.get('RENDER'):
         # Production on Render - use DATABASE_URL if provided, otherwise SQLite in current directory
         SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///muslim_lifestyle.db'
     else:

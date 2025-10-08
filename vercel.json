@@ -1,0 +1,39 @@
+{
+  "version": 2,
+  "name": "muslim-companion",
+  "builds": [
+    {
+      "src": "backend/app.py",
+      "use": "@vercel/python",
+      "config": {
+        "maxLambdaSize": "15mb"
+      }
+    },
+    {
+      "src": "frontend/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/backend/app.py"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/frontend/$1"
+    }
+  ],
+  "env": {
+    "VERCEL": "true",
+    "PYTHON_PATH": "/var/task"
+  },
+  "functions": {
+    "backend/app.py": {
+      "runtime": "python3.9"
+    }
+  }
+}

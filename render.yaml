@@ -1,0 +1,31 @@
+# Render.yaml - Deployment Configuration for Muslim Companion App
+version: "1"
+
+services:
+  # Backend Flask API
+  - type: web
+    name: muslim-companion-backend
+    runtime: python
+    startCommand: "gunicorn app:app"
+    plan: free
+    rootDir: backend
+    envVars:
+      - key: RENDER
+        value: "true"
+      - key: PYTHON_VERSION
+        value: "3.11.5"
+    
+  # Frontend React Static Site  
+  - type: web
+    name: muslim-companion-frontend
+    runtime: static
+    buildCommand: "npm install && npm run build"
+    staticPublishPath: dist
+    plan: free
+    rootDir: frontend
+    envVars:
+      - key: REACT_APP_API_URL
+        fromService:
+          type: web
+          name: muslim-companion-backend
+          property: host
