@@ -2,15 +2,15 @@ import axios from 'axios'
 
 // Set base URL for API calls - Environment aware
 const getApiBaseUrl = () => {
-  // Check if we have an explicit API URL set
-  if (process.env.REACT_APP_API_URL) {
-    return process.env.REACT_APP_API_URL
+  // Check if we have an explicit API URL set (Vite uses import.meta.env)
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL
   }
   
   // Check if we're in production
-  if (process.env.NODE_ENV === 'production') {
+  if (import.meta.env.MODE === 'production') {
     // Check if we're on Vercel
-    if (window.location.hostname.includes('vercel.app')) {
+    if (typeof window !== 'undefined' && window.location.hostname.includes('vercel.app')) {
       return `${window.location.origin}/api`
     }
     // Default production URL (Render or other)
@@ -22,6 +22,11 @@ const getApiBaseUrl = () => {
 }
 
 const API_BASE_URL = getApiBaseUrl()
+
+// Debug: Log API base URL in development
+if (import.meta.env.MODE === 'development') {
+  console.log('🔗 API Base URL:', API_BASE_URL)
+}
 
 // Create axios instance with better error handling
 const api = axios.create({

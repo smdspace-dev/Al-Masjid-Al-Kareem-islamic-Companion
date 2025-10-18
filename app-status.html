@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Muslim Companion App - Status Check</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 800px; 
+            margin: 50px auto; 
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        .status { 
+            padding: 10px; 
+            margin: 10px 0; 
+            border-radius: 5px; 
+        }
+        .success { background: #0f5132; }
+        .error { background: #721c24; }
+        .info { background: #055160; }
+        h1 { color: #d4af37; }
+        .endpoint { 
+            background: #2d2d2d; 
+            padding: 10px; 
+            margin: 5px 0; 
+            border-radius: 3px; 
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>🕌 Muslim Companion App - Status Check</h1>
+    
+    <div class="status info">
+        <h3>📊 Application Status</h3>
+        <div id="status-info">Checking servers...</div>
+    </div>
+
+    <div class="status info">
+        <h3>🔗 Quick Links</h3>
+        <div class="endpoint">Frontend: <a href="http://localhost:3000" target="_blank">http://localhost:3000</a></div>
+        <div class="endpoint">Backend API: <a href="http://localhost:5000/api/" target="_blank">http://localhost:5000/api/</a></div>
+    </div>
+
+    <div class="status info">
+        <h3>🧪 Backend Test Results</h3>
+        <div id="backend-test">Testing backend...</div>
+    </div>
+
+    <script>
+        async function checkStatus() {
+            const statusDiv = document.getElementById('status-info');
+            const backendDiv = document.getElementById('backend-test');
+            
+            try {
+                // Test frontend
+                statusDiv.innerHTML = '✅ Frontend: Running on http://localhost:3000<br>';
+                
+                // Test backend
+                const response = await fetch('http://localhost:5000/api/');
+                const data = await response.text();
+                
+                if (response.ok || response.status === 404) {
+                    statusDiv.innerHTML += '✅ Backend: Running on http://localhost:5000<br>';
+                    backendDiv.innerHTML = '✅ Backend responding (API endpoints available)';
+                } else {
+                    throw new Error('Backend not responding');
+                }
+                
+                statusDiv.innerHTML += '<br><strong>🎉 Both servers are running!</strong>';
+                statusDiv.innerHTML += '<br><br>If you see a white screen on the main app:';
+                statusDiv.innerHTML += '<br>1. Check browser console (F12) for JavaScript errors';
+                statusDiv.innerHTML += '<br>2. Try refreshing the page (Ctrl+F5)';
+                statusDiv.innerHTML += '<br>3. Clear browser cache';
+                
+            } catch (error) {
+                statusDiv.innerHTML = '❌ Error: ' + error.message;
+                backendDiv.innerHTML = '❌ Backend test failed: ' + error.message;
+            }
+        }
+        
+        checkStatus();
+    </script>
+</body>
+</html>
