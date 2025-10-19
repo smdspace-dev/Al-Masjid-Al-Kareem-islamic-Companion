@@ -13,10 +13,41 @@ import subprocess
 import sys
 import time
 import threading
-from config import Config
 
-# Import extensions
-from extensions import db, cors, jwt
+# Railway compatibility - add backend directory to Python path
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+# Import config with Railway compatibility
+try:
+    from config import Config
+except ImportError:
+    # Fallback for different deployment scenarios
+    try:
+        from backend.config import Config
+    except ImportError:
+        # Last resort - direct path
+        import importlib.util
+        config_path = os.path.join(os.path.dirname(__file__), 'config.py')
+        spec = importlib.util.spec_from_file_location("config", config_path)
+        config_module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(config_module)
+        Config = config_module.Config
+
+# Import extensions with Railway compatibility
+try:
+    from extensions import db, cors, jwt
+except ImportError:
+    # Fallback for Railway deployment
+    try:
+        from backend.extensions import db, cors, jwt
+    except ImportError:
+        # Last resort - direct path
+        import importlib.util
+        ext_path = os.path.join(os.path.dirname(__file__), 'extensions.py')
+        spec = importlib.util.spec_from_file_location("extensions", ext_path)
+        ext_module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(ext_module)
+        db, cors, jwt = ext_module.db, ext_module.cors, ext_module.jwt
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -61,15 +92,27 @@ else:
 jwt.init_app(app)
 
 # Import models after extensions initialization
-from models import User, PrayerTime, RamadanArrangement, Bookmark, UserPreference
+# Import models with Railway compatibility
+try:
+    from models import User, PrayerTime, RamadanArrangement, Bookmark, UserPreference
+except ImportError:
+    from backend.models import User, PrayerTime, RamadanArrangement, Bookmark, UserPreference
 
-# Import routes
-from routes.auth import auth_bp
-from routes.prayer import prayer_bp
-from routes.quran import quran_bp
-from routes.hadith import hadith_bp
-from routes.arrangements import arrangements_bp
-from routes.admin import admin_bp
+# Import routes with Railway compatibility
+try:
+    from routes.auth import auth_bp
+    from routes.prayer import prayer_bp
+    from routes.quran import quran_bp
+    from routes.hadith import hadith_bp
+    from routes.arrangements import arrangements_bp
+    from routes.admin import admin_bp
+except ImportError:
+    from backend.routes.auth import auth_bp
+    from backend.routes.prayer import prayer_bp
+    from backend.routes.quran import quran_bp
+    from backend.routes.hadith import hadith_bp
+    from backend.routes.arrangements import arrangements_bp
+    from backend.routes.admin import admin_bp
 
 # Register blueprints
 app.register_blueprint(auth_bp, url_prefix='/api/auth')
