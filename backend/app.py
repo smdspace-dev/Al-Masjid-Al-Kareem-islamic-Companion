@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Muslim Lifestyle App - Flask Backend
-A comprehensive Islamic companion app for Indian Muslims
+Qareeb - Islamic Companion App Backend
+A comprehensive Islamic companion app
 """
 
 from flask import Flask, request, jsonify, send_from_directory
@@ -9,6 +9,10 @@ from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identi
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
 import os
+import subprocess
+import sys
+import time
+import threading
 from config import Config
 
 # Import extensions
@@ -21,8 +25,16 @@ app.config.from_object(Config)
 # Initialize extensions with app
 db.init_app(app)
 
-# CORS configuration - Allow local, Render, and Vercel origins
-if os.environ.get('VERCEL'):
+# CORS configuration - Allow Railway, local, Render, and Vercel origins
+if os.environ.get('RAILWAY_ENVIRONMENT'):
+    # Railway deployment CORS
+    cors.init_app(app, origins=[
+        "https://*.railway.app",
+        "https://*.up.railway.app",
+        "http://localhost:3000", 
+        "http://127.0.0.1:3000"
+    ])
+elif os.environ.get('VERCEL'):
     # Vercel deployment CORS
     cors.init_app(app, origins=[
         "https://*.vercel.app",
@@ -67,37 +79,66 @@ app.register_blueprint(hadith_bp, url_prefix='/api/hadith')
 app.register_blueprint(arrangements_bp, url_prefix='/api/arrangements')
 app.register_blueprint(admin_bp, url_prefix='/api/admin')
 
+# Static file serving for production (Railway)
 @app.route('/', methods=['GET'])
-def index():
-    """Root endpoint"""
+def serve_frontend():
+    """Serve the React frontend in production"""
+    if os.environ.get('RAILWAY_ENVIRONMENT'):
+        # In production, serve the built React app
+        static_folder = os.path.join(app.root_path, 'static')
+        if os.path.exists(os.path.join(static_folder, 'index.html')):
+            return send_from_directory(static_folder, 'index.html')
+    
+    # Development or fallback API response
     return jsonify({
-        'message': 'Muslim Lifestyle API - Use /api endpoints to access resources'
+        'message': 'Qareeb Islamic Companion API - Use /api endpoints to access resources',
+        'frontend': 'Run npm run dev in frontend folder for development'
     })
+
+@app.route('/static/<path:filename>')
+def serve_static(filename):
+    """Serve static files for the frontend"""
+    static_folder = os.path.join(app.root_path, 'static')
+    return send_from_directory(static_folder, filename)
 
 @app.route('/api/health', methods=['GET'])
 def health_check():
     """Health check endpoint"""
     return jsonify({
         'status': 'healthy',
-        'message': 'Muslim Lifestyle App Backend is running',
-        'timestamp': datetime.utcnow().isoformat()
+        'message': 'Qareeb Islamic Companion Backend is running',
+        'timestamp': datetime.utcnow().isoformat(),
+        'environment': 'railway' if os.environ.get('RAILWAY_ENVIRONMENT') else 'development'
     })
 
-# Catch-all route to handle unknown routes
+# Catch-all route to handle unknown routes and serve React app
 @app.route('/<path:path>', methods=['GET'])
 def catch_all(path):
-    """Handle all unknown routes gracefully"""
+    """Handle unknown routes - serve React app in production or API response in development"""
+    # Don't serve frontend for API routes
+    if path.startswith('api/'):
+        return jsonify({
+            'message': f'The requested API path /{path} does not exist',
+            'available_endpoints': [
+                '/api/health',
+                '/api/auth/login',
+                '/api/auth/register',
+                '/api/prayer',
+                '/api/quran',
+                '/api/hadith'
+            ]
+        }), 404
+    
+    # In production (Railway), serve the React app for all non-API routes
+    if os.environ.get('RAILWAY_ENVIRONMENT'):
+        static_folder = os.path.join(app.root_path, 'static')
+        if os.path.exists(os.path.join(static_folder, 'index.html')):
+            return send_from_directory(static_folder, 'index.html')
+    
+    # Development fallback
     return jsonify({
         'message': f'The requested path /{path} does not exist',
-        'available_endpoints': [
-            '/api/auth/login',
-            '/api/auth/register',
-            '/api/auth/me',
-            '/api/prayer/times/<city>',
-            '/api/quran/surahs',
-            '/api/hadith/collections',
-            '/api/arrangements'
-        ]
+        'note': 'Start the React development server for frontend routes'
     }), 404
 
 @app.route('/api/dashboard', methods=['GET'])
@@ -155,11 +196,11 @@ def create_tables():
         print("✅ Database tables created successfully!")
 
         # Create default admin user
-        if not User.query.filter_by(username='admin').first():
+        if not User.query.filter_by(username='ahilxdesigns@gmail.com').first():
             admin_user = User(
-                username='admin',
-                email='admin@muslim-app.com',
-                password_hash=generate_password_hash('admin123'),
+                username='ahilxdesigns@gmail.com',
+                email='ahilxdesigns@gmail.com',
+                password_hash=generate_password_hash('Qareeb@2025'),
                 role='admin'
             )
             db.session.add(admin_user)
@@ -177,17 +218,59 @@ def create_tables():
         db.session.commit()
         print("✅ Default users created successfully!")
 
+def start_frontend_server():
+    """Start the React frontend development server"""
+    try:
+        frontend_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'frontend')
+        if os.path.exists(frontend_path):
+            print("🌐 Starting React frontend server on port 3000...")
+            # Use npm run dev to start the Vite development server
+            # Set environment variable to avoid port conflict prompts
+            env = os.environ.copy()
+            env['VITE_PORT'] = '3000'
+            subprocess.Popen(['npm', 'run', 'dev'], cwd=frontend_path, shell=True, env=env)
+        else:
+            print("⚠️  Frontend directory not found, skipping frontend server startup")
+    except Exception as e:
+        print(f"❌ Error starting frontend server: {e}")
+
 if __name__ == '__main__':
     create_tables()
-    print("🕌 Starting Muslim Lifestyle App Backend...")
-    print("🌟 Ancient Rich Theme - Classical Islamic Companion")
-    print("📊 Database: SQLite (development)")
-    print("🔑 Default admin: admin / admin123")
+    print("🕌 Starting Qareeb Islamic Companion Application...")
+    print("🌟 Islamic Companion Full Stack Application")
     
-    # Get port from environment variable (Render) or default to 5000 (local)
+    # Check if we're in production environment
+    is_production = bool(os.environ.get('RAILWAY_ENVIRONMENT') or os.environ.get('RENDER') or os.environ.get('VERCEL'))
+    
+    if os.environ.get('RAILWAY_ENVIRONMENT'):
+        print("🚂 Running on Railway")
+        print("📊 Database: PostgreSQL (Railway)")
+    elif is_production:
+        print("☁️  Running in production")
+        print("📊 Database: Production")
+    else:
+        print("💻 Running in development")
+        print("📊 Database: SQLite (development)")
+    
+    print("🔑 Default admin: ahilxdesigns@gmail.com / Qareeb@2025")
+    
+    if not is_production:
+        # Start frontend server in a separate thread for local development
+        print("🚀 Starting both frontend and backend servers...")
+        frontend_thread = threading.Thread(target=start_frontend_server, daemon=True)
+        frontend_thread.start()
+        time.sleep(3)  # Give frontend server time to start
+    else:
+        print("🌐 Frontend served from static files")
+    
+    # Get port from environment variable or default to 5000 (local)
     port = int(os.environ.get('PORT', 5000))
-    host = '0.0.0.0' if os.environ.get('RENDER') else '127.0.0.1'
-    debug = not bool(os.environ.get('RENDER'))
+    host = '0.0.0.0' if is_production else '127.0.0.1'
+    debug = not is_production
     
-    print(f"🏛️  Server starting on http://{host}:{port}")
+    print(f"🏛️  Backend server starting on http://{host}:{port}")
+    if not is_production:
+        print(f"🌐 Frontend server will start on http://localhost:3000 (or next available port)")
+    print("📖 Qareeb - Your Islamic Companion is ready!")
+    
     app.run(debug=debug, host=host, port=port)

@@ -47,17 +47,14 @@ const Login = () => {
     }
 
     try {
-      console.log('Attempting login with:', formData.username);
-      
       // Try normal login first
       const result = await login(formData.username, formData.password);
       
       if (!result || !result.success) {
         if (serverStatus.includes('Cannot connect') && 
-            formData.username === 'admin' && 
-            formData.password === 'admin123') {
+            formData.username === 'ahilxdesigns@gmail.com' && 
+            formData.password === 'Qareeb@2025') {
           // Provide mock login if backend is unreachable
-          console.log('Using mock login for admin user');
           localStorage.setItem('auth_token', 'mock_token_for_admin');
           window.location.reload();
           return;
@@ -69,9 +66,8 @@ const Login = () => {
       
       // If server is down but credentials are default admin, use mock login
       if (serverStatus.includes('Cannot connect') && 
-          formData.username === 'admin' && 
-          formData.password === 'admin123') {
-        console.log('Server down, using mock login');
+          formData.username === 'ahilxdesigns@gmail.com' && 
+          formData.password === 'Qareeb@2025') {
         localStorage.setItem('auth_token', 'mock_token_for_admin');
         window.location.reload();
         return;
@@ -99,9 +95,9 @@ const Login = () => {
             <i className="fas fa-mosque text-gold-400 text-3xl"></i>
           </div>
           <h1 className="text-3xl font-heading font-bold text-gold-400 mb-2">
-            Al-Masjid Al-Kareem
+            Qareeb
           </h1>
-          <p className="text-gray-400">Classical Islamic Companion</p>
+          <p className="text-gray-400">Islamic Companion</p>
           <div className={`mt-2 text-xs ${serverStatus.includes('Connected') ? 'text-green-400' : 'text-red-400'}`}>
             Server Status: {serverStatus}
           </div>

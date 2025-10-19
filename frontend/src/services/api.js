@@ -23,11 +23,6 @@ const getApiBaseUrl = () => {
 
 const API_BASE_URL = getApiBaseUrl()
 
-// Debug: Log API base URL in development
-if (import.meta.env.MODE === 'development') {
-  console.log('🔗 API Base URL:', API_BASE_URL)
-}
-
 // Create axios instance with better error handling
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -47,7 +42,6 @@ api.interceptors.request.use(
     return config
   },
   (error) => {
-    console.error('Request interceptor error:', error)
     return Promise.reject(error)
   }
 )

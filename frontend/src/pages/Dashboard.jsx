@@ -15,16 +15,13 @@ const Dashboard = () => {
 
   const fetchPrayerTimes = async () => {
     try {
-      console.log('Fetching prayer times for dashboard...');
       const response = await axios.get('/api/prayer/times/Delhi')
-      console.log('Dashboard prayer times response:', response.data);
       
       if (response.data && response.data.times) {
         setPrayerTimes(response.data.times)
         calculateCurrentPrayer(response.data.times)
       } else {
         // Fallback to mock data
-        console.log('Using mock prayer times data');
         const mockTimes = { 
           'Fajr': '04:25', 'Dhuhr': '12:10', 'Asr': '15:45', 
           'Maghrib': '18:30', 'Isha': '20:00', 'Sunrise': '06:15' 
@@ -100,7 +97,7 @@ const Dashboard = () => {
           Assalamu Alaikum, {user?.username}
         </h1>
         <p className="text-lg text-gray-300 font-medium">
-          Welcome to your Classical Islamic Companion
+          Welcome to your Islamic Companion
         </p>
         <div className="mt-4 text-gray-400">
           <p>{new Date().toLocaleDateString('en-US', { 

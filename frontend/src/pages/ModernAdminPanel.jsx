@@ -39,15 +39,11 @@ const ModernAdminPanel = () => {
 
   // Check if user is admin - Very flexible check with multiple fallbacks
   const isUserAdmin = () => {
-    console.log('Admin check - user:', user);
-    console.log('Admin check - isAuthenticated:', isAuthenticated);
-    
     // Allow admin access in multiple ways
     if (!isAuthenticated) {
       // Try guest admin access
       const guestToken = localStorage.getItem('auth_token');
       if (guestToken === 'guest_user_token' || guestToken === 'mock_token_for_admin') {
-        console.log('Guest admin access granted');
         return true;
       }
       return false;
@@ -55,16 +51,14 @@ const ModernAdminPanel = () => {
     
     if (!user) {
       // If no user but authenticated, assume admin for compatibility
-      console.log('No user object but authenticated - granting admin access');
       return true;
     }
     
     // Multiple admin checks
     const isAdmin = user.role === 'admin' || 
-                    user.username === 'admin' || 
-                    user.email === 'admin@muslim-app.com' ||
+                    user.username === 'ahilxdesigns@gmail.com' || 
+                    user.email === 'ahilxdesigns@gmail.com' ||
                     user.id === 1;
-    console.log('Admin check - isAdmin:', isAdmin);
     return isAdmin;
   };
 

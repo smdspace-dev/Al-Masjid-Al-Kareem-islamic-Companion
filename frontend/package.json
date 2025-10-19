@@ -1,14 +1,12 @@
 {
-  "name": "muslim-lifestyle-frontend",
+  "name": "qareeb-frontend",
   "version": "1.0.0",
   "type": "module",
-  "description": "Ancient Rich Islamic Companion - React Frontend",
+  "description": "Qareeb - Islamic Companion React Frontend",
   "private": true,
   "scripts": {
     "dev": "vite --host",
     "build": "vite build",
-    "build:vercel": "npm run build",
-    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -23,9 +21,6 @@
     "react-router-dom": "^6.15.0"
   },
   "devDependencies": {
-    "@babel/preset-react": "^7.27.1",
-    "@types/react": "^18.2.15",
-    "@types/react-dom": "^18.2.7",
     "@vitejs/plugin-react": "^4.0.3",
     "autoprefixer": "^10.4.21",
     "postcss": "^8.5.6",

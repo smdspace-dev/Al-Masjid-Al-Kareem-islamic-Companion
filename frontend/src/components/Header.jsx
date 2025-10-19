@@ -27,9 +27,9 @@ const Header = () => {
             </div>
             <div>
               <h1 className="text-xl font-heading font-bold text-gold-400">
-                Al-Masjid Al-Kareem
+                Qareeb
               </h1>
-              <p className="text-xs text-gray-400">Classical Islamic Companion</p>
+              <p className="text-xs text-gray-400">Islamic Companion</p>
             </div>
           </div>
 

@@ -6,7 +6,6 @@ import Header from './components/Header'
 import Sidebar from './components/Sidebar'
 import Footer from './components/Footer'
 import GlobalAudioPlayer from './components/GlobalAudioPlayer'
-import AdminBypass from './components/AdminBypass'
 import Dashboard from './pages/Dashboard'
 import PrayerTimes from './pages/PrayerTimes'
 import Quran from './pages/Quran'
@@ -21,29 +20,10 @@ import LoadingSpinner from './components/LoadingSpinner'
 
 function App() {
   const { user, loading } = useAuth()
-  
-  // Debug information
-  console.log('App render - User:', user, 'Loading:', loading);
-  
-  // Force a specific path if on root
-  useEffect(() => {
-    if (window.location.pathname === '/') {
-      console.log('On root path');
-    }
-  }, []);
 
   return (
     <Router>
       <Routes>
-        {/* Special route for the test page */}
-        <Route path="/test.html" element={
-          <div className="p-4">
-            <h1>Test page is handled separately</h1>
-            <p>This React app will not intercept /test.html</p>
-            <a href="/">Go to main app</a>
-          </div>
-        } />
-        
         {/* Main app routes */}
         <Route path="/*" element={
           loading ? (
@@ -90,7 +70,6 @@ function App() {
                 </div>
                 <Footer />
                 <GlobalAudioPlayer />
-                <AdminBypass />
               </div>
             </AudioPlayerProvider>
           )

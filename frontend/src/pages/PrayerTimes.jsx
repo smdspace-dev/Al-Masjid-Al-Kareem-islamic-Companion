@@ -26,14 +26,11 @@ const PrayerTimes = () => {
     setLoading(true)
     try {
       // Try to fetch from API first
-      console.log(`Fetching prayer times for ${city}...`);
       const response = await axios.get(`/api/prayer/times/${city}`);
-      console.log('Prayer times API response:', response.data);
       if (response.data && response.data.times) {
         setPrayerTimes(response.data.times);
       } else {
         // Fallback to mock data if API doesn't return expected format
-        console.log('Using mock data as fallback');
         setPrayerTimes(mockPrayerTimes[city] || mockPrayerTimes['Delhi']);
       }
     } catch (error) {

@@ -7,10 +7,16 @@ class Config:
     # Basic Flask config
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'ancient-rich-islamic-app-secret-key-2025'
 
-    # Database configuration - Compatible with local, Render, and Vercel
+    # Database configuration - Compatible with Railway, local, Render, and Vercel
     basedir = os.path.abspath(os.path.dirname(__file__))
     
-    if os.environ.get('VERCEL'):
+    if os.environ.get('RAILWAY_ENVIRONMENT'):
+        # Railway deployment - use PostgreSQL DATABASE_URL
+        SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+        if SQLALCHEMY_DATABASE_URI and SQLALCHEMY_DATABASE_URI.startswith('postgres://'):
+            # Fix for SQLAlchemy 1.4+ compatibility
+            SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI.replace('postgres://', 'postgresql://', 1)
+    elif os.environ.get('VERCEL'):
         # Vercel serverless - use temporary SQLite or environment database
         SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:////tmp/muslim_lifestyle.db'
     elif os.environ.get('RENDER'):
@@ -55,7 +61,13 @@ class DevelopmentConfig(Config):
 class ProductionConfig(Config):
     """Production configuration"""
     DEBUG = False
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'postgresql://user:password@localhost/muslim_lifestyle_prod'
+    # Railway will provide DATABASE_URL automatically
+    if os.environ.get('RAILWAY_ENVIRONMENT'):
+        SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+        if SQLALCHEMY_DATABASE_URI and SQLALCHEMY_DATABASE_URI.startswith('postgres://'):
+            SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI.replace('postgres://', 'postgresql://', 1)
+    else:
+        SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'postgresql://user:password@localhost/muslim_lifestyle_prod'
 
 class TestingConfig(Config):
     """Testing configuration"""

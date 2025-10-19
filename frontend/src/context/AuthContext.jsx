@@ -31,8 +31,8 @@ export const AuthProvider = ({ children }) => {
         console.log('Using mock admin user');
         setUser({
           id: 1,
-          username: 'admin',
-          email: 'admin@muslim-app.com',
+          username: 'ahilxdesigns@gmail.com',
+          email: 'ahilxdesigns@gmail.com',
           role: 'admin',
           is_active: true
         });
@@ -105,13 +105,12 @@ export const AuthProvider = ({ children }) => {
       
       // Special handling for offline mode with admin credentials
       if (!window.navigator.onLine || error.message.includes('Network Error')) {
-        if (username === 'admin' && password === 'admin123') {
-          console.log('Network is offline - using mock admin login');
+        if (username === 'ahilxdesigns@gmail.com' && password === 'Qareeb@2025') {
           const mockToken = 'mock_token_for_admin';
           const mockUser = {
             id: 1,
-            username: 'admin',
-            email: 'admin@muslim-app.com',
+            username: 'ahilxdesigns@gmail.com',
+            email: 'ahilxdesigns@gmail.com',
             role: 'admin',
             is_active: true
           };
@@ -148,15 +147,15 @@ export const AuthProvider = ({ children }) => {
 
   // Function to check if the current user has admin role
   const isAdmin = () => {
-    return user && (user.role === 'admin' || user.username === 'admin');
+    return user && (user.role === 'admin' || user.username === 'ahilxdesigns@gmail.com');
   };
 
   // Enable guest admin access for testing
   const enableAdminAccess = () => {
     const adminUser = {
       id: 1,
-      username: 'admin',
-      email: 'admin@muslim-app.com',
+      username: 'ahilxdesigns@gmail.com',
+      email: 'ahilxdesigns@gmail.com',
       role: 'admin',
       is_active: true
     };

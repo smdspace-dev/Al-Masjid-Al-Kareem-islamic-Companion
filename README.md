@@ -1,6 +1,6 @@
-# 🕌 Al-Masjid Al-Kareem 
+# 🕌 Qareeb
 
->Islamic lifestyle application for Indian Muslims, featuring a rich ancient theme inspired by traditional Islamic art and architecture.
+>Islamic companion application providing essential tools for Muslim daily life, featuring prayer times, Quran reading, and community features.
 
 ## ✨ Latest Updates (January 2025)
 
@@ -362,7 +362,7 @@ cat RENDER_DEPLOYMENT.md
 2. **Frontend**: Create Static Site on Render with `frontend/` folder  
 3. **Environment**: Set `REACT_APP_API_URL` to your backend URL
 
-**Live URLs after deployment:**
+**Live URLs deployment:**
 - Frontend: `https://your-app.onrender.com`
 - Backend: `https://your-backend.onrender.com`
 
@@ -427,8 +427,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**✨ Experience the beauty of classical Islamic design with modern functionality**
-
 *"And whoever relies upon Allah - then He is sufficient for him. Indeed, Allah will accomplish His purpose."* - Quran 65:3
 
-Made with ❤️ for the Muslim Ummah
+Made with ❤️ for the Muslim Ummah 
