@@ -13,9 +13,14 @@ class Config:
     if os.environ.get('RAILWAY_ENVIRONMENT'):
         # Railway deployment - use PostgreSQL DATABASE_URL
         SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
-        if SQLALCHEMY_DATABASE_URI and SQLALCHEMY_DATABASE_URI.startswith('postgres://'):
+        if not SQLALCHEMY_DATABASE_URI:
+            # Fallback for Railway if DATABASE_URL is not set
+            print("⚠️ DATABASE_URL not found, using SQLite fallback for Railway")
+            SQLALCHEMY_DATABASE_URI = 'sqlite:///railway_fallback.db'
+        elif SQLALCHEMY_DATABASE_URI.startswith('postgres://'):
             # Fix for SQLAlchemy 1.4+ compatibility
             SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI.replace('postgres://', 'postgresql://', 1)
+        print(f"🚂 Railway Database: {SQLALCHEMY_DATABASE_URI[:50]}...")
     elif os.environ.get('VERCEL'):
         # Vercel serverless - use temporary SQLite or environment database
         SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:////tmp/muslim_lifestyle.db'

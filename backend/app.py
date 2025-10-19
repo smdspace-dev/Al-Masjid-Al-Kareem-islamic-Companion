@@ -53,6 +53,15 @@ except ImportError:
 app = Flask(__name__)
 app.config.from_object(Config)
 
+# Debug environment variables for Railway
+if os.environ.get('RAILWAY_ENVIRONMENT'):
+    print("🚂 Railway Environment Variables:")
+    print(f"DATABASE_URL: {'✅ Set' if os.environ.get('DATABASE_URL') else '❌ Missing'}")
+    print(f"SECRET_KEY: {'✅ Set' if os.environ.get('SECRET_KEY') else '❌ Missing'}")
+    print(f"JWT_SECRET_KEY: {'✅ Set' if os.environ.get('JWT_SECRET_KEY') else '❌ Missing'}")
+    db_uri = app.config.get('SQLALCHEMY_DATABASE_URI', 'Not set')
+    print(f"Final DB URI: {db_uri[:50]}...")
+
 # Initialize extensions with app
 db.init_app(app)
 
