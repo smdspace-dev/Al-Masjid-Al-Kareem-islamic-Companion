@@ -150,7 +150,36 @@ def serve_frontend():
         if os.path.exists(index_path):
             return send_from_directory(static_folder, 'index.html')
         else:
-            print("❌ index.html not found, serving API response")
+            print("❌ index.html not found, serving fallback HTML")
+            # Serve a basic HTML page as fallback
+            return '''
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Qareeb - Islamic Companion</title>
+                <style>
+                    body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+                    .container { max-width: 600px; margin: 0 auto; }
+                    h1 { font-size: 2.5em; margin-bottom: 20px; }
+                    p { font-size: 1.2em; margin: 20px 0; }
+                    .api-link { color: #ffd700; text-decoration: none; }
+                    .api-link:hover { text-decoration: underline; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <h1>🕌 Qareeb</h1>
+                    <h2>Islamic Companion</h2>
+                    <p>Your Islamic companion app is successfully deployed!</p>
+                    <p>Frontend is currently being built. Please check back in a few minutes.</p>
+                    <p>API is available at: <a href="/api/health" class="api-link">/api/health</a></p>
+                    <p>Admin Login: ahilxdesigns@gmail.com / Qareeb@2025</p>
+                </div>
+            </body>
+            </html>
+            '''
     
     # Development or fallback API response
     return jsonify({

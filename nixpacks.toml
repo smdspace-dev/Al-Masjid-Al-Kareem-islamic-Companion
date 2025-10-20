@@ -9,9 +9,14 @@ cmds = [
 
 [phases.build]
 cmds = [
+    'echo "Building frontend..."',
     'cd frontend && npm run build',
+    'echo "Frontend build complete"',
     'mkdir -p backend/static',
-    'cp -r frontend/dist/* backend/static/'
+    'echo "Created static directory"',
+    'ls -la frontend/',
+    'if [ -d "frontend/dist" ]; then cp -r frontend/dist/* backend/static/ && echo "Static files copied"; else echo "Error: frontend/dist not found"; fi',
+    'ls -la backend/static/ || echo "Static directory empty"'
 ]
 
 [phases.start]
