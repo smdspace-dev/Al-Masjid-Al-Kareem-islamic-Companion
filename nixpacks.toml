@@ -10,19 +10,10 @@ cmds = [
 
 [phases.build]
 cmds = [
-    'echo "=== FRONTEND BUILD START ==="',
-    'cd frontend && pwd && ls -la',
-    'cd frontend && cat package.json | grep build',
-    'cd frontend && npm run build 2>&1',
-    'echo "=== FRONTEND BUILD COMPLETE ==="',
-    'ls -la frontend/',
-    'if [ -d "frontend/dist" ]; then echo "✅ frontend/dist found"; else echo "❌ frontend/dist NOT found"; fi',
-    'if [ -d "frontend/build" ]; then echo "✅ frontend/build found"; else echo "❌ frontend/build NOT found"; fi',
+    'echo "=== ENSURING STATIC FILES ==="',
     'mkdir -p backend/static',
-    'echo "=== COPYING FRONTEND FILES ==="',
-    'if [ -d "frontend/dist" ]; then cp -r frontend/dist/* backend/static/ && echo "✅ Copied from dist"; elif [ -d "frontend/build" ]; then cp -r frontend/build/* backend/static/ && echo "✅ Copied from build"; else echo "❌ Creating fallback index.html"; echo "<!DOCTYPE html><html><head><title>Qareeb</title><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><style>body{font-family:Arial,sans-serif;margin:0;padding:20px;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;text-align:center}.container{max-width:800px;margin:0 auto;padding:40px}.title{font-size:3em;margin-bottom:20px}.subtitle{font-size:1.5em;margin-bottom:30px}.feature{background:rgba(255,255,255,0.1);padding:20px;margin:20px 0;border-radius:10px}.api-link{color:#ffd700;text-decoration:none}.api-link:hover{text-decoration:underline}</style></head><body><div class=\"container\"><h1 class=\"title\">🕌 Qareeb</h1><h2 class=\"subtitle\">Islamic Companion</h2><p>Your comprehensive Islamic companion app is now live!</p><div class=\"feature\"><h3>🕌 Prayer Times</h3><p>Get accurate prayer times for your location</p></div><div class=\"feature\"><h3>📖 Quran Reader</h3><p>Read and listen to the Holy Quran</p></div><div class=\"feature\"><h3>📚 Hadith Collection</h3><p>Explore authentic Hadith collections</p></div><div class=\"feature\"><h3>👤 Admin Panel</h3><p>Login: <strong>ahilxdesigns@gmail.com</strong><br>Password: <strong>Qareeb@2025</strong></p></div><p>API Documentation: <a href=\"/api/health\" class=\"api-link\">/api/health</a></p><p style=\"margin-top:40px;font-size:0.9em;opacity:0.8\">Built with ❤️ by smdspace</p></div></body></html>" > backend/static/index.html && echo "✅ Fallback index.html created"; fi',
-    'ls -la backend/static/ 2>/dev/null || echo "Static directory empty or missing"',
-    'echo "=== BUILD PROCESS COMPLETE ==="'
+    'ls -la backend/static/',
+    'echo "Static directory created"'
 ]
 
 [phases.start]

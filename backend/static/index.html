@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qareeb - Islamic Companion</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 40px 0;
+        }
+        
+        .title {
+            font-size: 3.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.5em;
+            opacity: 0.9;
+            margin-bottom: 40px;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 50px 0;
+        }
+        
+        .feature {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s ease, background 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .feature:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .feature-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+            display: block;
+        }
+        
+        .feature h3 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #ffd700;
+        }
+        
+        .feature p {
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+        
+        .admin-panel {
+            background: rgba(255, 215, 0, 0.1);
+            border: 2px solid #ffd700;
+            margin-top: 40px;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+        }
+        
+        .admin-panel h3 {
+            color: #ffd700;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+        
+        .credentials {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .api-section {
+            text-align: center;
+            margin-top: 50px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+        }
+        
+        .api-link {
+            display: inline-block;
+            background: #ffd700;
+            color: #333;
+            padding: 15px 30px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .api-link:hover {
+            background: #ffed4e;
+            transform: scale(1.05);
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .footer a {
+            color: #ffd700;
+            text-decoration: none;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2.5em;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">🕌 Qareeb</h1>
+            <p class="subtitle">Your Comprehensive Islamic Companion</p>
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <span class="feature-icon">🕌</span>
+                <h3>Prayer Times</h3>
+                <p>Get accurate prayer times based on your location. Never miss a prayer with customizable notifications and reminders.</p>
+            </div>
+            
+            <div class="feature">
+                <span class="feature-icon">📖</span>
+                <h3>Quran Reader</h3>
+                <p>Read the Holy Quran with beautiful typography. Listen to recitations and access translations in multiple languages.</p>
+            </div>
+            
+            <div class="feature">
+                <span class="feature-icon">📚</span>
+                <h3>Hadith Collection</h3>
+                <p>Explore authentic Hadith collections from trusted sources. Search and bookmark your favorite Hadiths.</p>
+            </div>
+            
+            <div class="feature">
+                <span class="feature-icon">🌙</span>
+                <h3>Islamic Calendar</h3>
+                <p>Stay updated with important Islamic dates and events. Plan your worship and community activities.</p>
+            </div>
+        </div>
+        
+        <div class="admin-panel">
+            <h3>👤 Admin Access</h3>
+            <p>Access the admin dashboard to manage content and users</p>
+            <div class="credentials">
+                <p><strong>Email:</strong> ahilxdesigns@gmail.com</p>
+                <p><strong>Password:</strong> Qareeb@2025</p>
+            </div>
+        </div>
+        
+        <div class="api-section">
+            <h3>🔗 API Endpoints</h3>
+            <p>Access our Islamic companion API for developers</p>
+            <a href="/api/health" class="api-link">Health Check</a>
+            <a href="/api/auth/login" class="api-link">Authentication</a>
+            <a href="/api/prayer" class="api-link">Prayer Times</a>
+            <a href="/api/quran" class="api-link">Quran API</a>
+        </div>
+        
+        <div class="footer">
+            <p>Designed and maintained by <a href="https://www.linkedin.com/in/thousif-ibrahim-29050421b" target="_blank">smdspace</a></p>
+            <p>© 2025 Qareeb. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
