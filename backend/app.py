@@ -71,15 +71,26 @@ if os.environ.get('RAILWAY_ENVIRONMENT'):
 
 # Initialize extensions with app
 try:
-    db.init_app(app)
-    print("✅ Database initialized successfully")
+    # Check if db is already initialized to prevent double registration
+    if hasattr(app, 'extensions') and 'sqlalchemy' in app.extensions:
+        print("⚠️ SQLAlchemy already initialized, skipping...")
+    else:
+        db.init_app(app)
+        print("✅ Database initialized successfully")
 except Exception as e:
     print(f"❌ Database initialization failed: {e}")
-    print("🔄 Attempting SQLite fallback...")
-    # Force SQLite fallback
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///emergency_fallback.db'
-    db.init_app(app)
-    print("✅ SQLite fallback initialized")
+    # Don't try to reinitialize if already done
+    if "already been registered" not in str(e):
+        print("🔄 Attempting SQLite fallback...")
+        # Force SQLite fallback
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///emergency_fallback.db'
+        try:
+            db.init_app(app)
+            print("✅ SQLite fallback initialized")
+        except Exception as fallback_error:
+            print(f"❌ SQLite fallback also failed: {fallback_error}")
+    else:
+        print("⚠️ Database already registered, continuing...")
 
 # CORS configuration - Allow Railway, local, Render, and Vercel origins
 if os.environ.get('RAILWAY_ENVIRONMENT'):

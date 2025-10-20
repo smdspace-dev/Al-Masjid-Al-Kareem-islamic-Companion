@@ -11,40 +11,22 @@ class Config:
     basedir = os.path.abspath(os.path.dirname(__file__))
     
     if os.environ.get('RAILWAY_ENVIRONMENT'):
-        # Railway deployment - try multiple possible database URL variables
-        SQLALCHEMY_DATABASE_URI = (
+        # Railway deployment - TEMPORARY: Force SQLite due to psycopg2 Python 3.13 compatibility issues
+        print("🚂 Railway detected - Using SQLite for stability")
+        SQLALCHEMY_DATABASE_URI = 'sqlite:///railway_stable.db'
+        
+        # TODO: Re-enable PostgreSQL once psycopg2 compatibility is resolved
+        # Keeping original PostgreSQL code for future use:
+        postgresql_uri = (
             os.environ.get('DATABASE_URL') or 
             os.environ.get('POSTGRES_URL') or
             os.environ.get('POSTGRESQL_URL') or
             os.environ.get('DB_URL')
         )
+        if postgresql_uri:
+            print(f"� PostgreSQL available but using SQLite for now: {postgresql_uri[:50]}...")
         
-        if not SQLALCHEMY_DATABASE_URI:
-            # Check for individual PostgreSQL components
-            pg_host = os.environ.get('PGHOST') or os.environ.get('POSTGRES_HOST')
-            pg_user = os.environ.get('PGUSER') or os.environ.get('POSTGRES_USER') 
-            pg_password = os.environ.get('PGPASSWORD') or os.environ.get('POSTGRES_PASSWORD')
-            pg_database = os.environ.get('PGDATABASE') or os.environ.get('POSTGRES_DB')
-            pg_port = os.environ.get('PGPORT') or os.environ.get('POSTGRES_PORT') or '5432'
-            
-            if all([pg_host, pg_user, pg_password, pg_database]):
-                SQLALCHEMY_DATABASE_URI = f"postgresql://{pg_user}:{pg_password}@{pg_host}:{pg_port}/{pg_database}"
-                print(f"🔧 Built DATABASE_URL from components")
-            else:
-                print("⚠️ No database connection found, using SQLite fallback for Railway")
-                SQLALCHEMY_DATABASE_URI = 'sqlite:///railway_fallback.db'
-        else:
-            # Try PostgreSQL first, fallback to SQLite if psycopg2 fails
-            try:
-                if SQLALCHEMY_DATABASE_URI.startswith('postgres://'):
-                    # Fix for SQLAlchemy 1.4+ compatibility
-                    SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI.replace('postgres://', 'postgresql://', 1)
-                print(f"🚂 Railway Database (PostgreSQL): {SQLALCHEMY_DATABASE_URI[:50]}...")
-            except Exception as e:
-                print(f"⚠️ PostgreSQL connection failed, using SQLite: {e}")
-                SQLALCHEMY_DATABASE_URI = 'sqlite:///railway_fallback.db'
-        
-        print(f"🚂 Final Railway Database: {SQLALCHEMY_DATABASE_URI[:50]}...")
+        print(f"🚂 Final Railway Database (SQLite): {SQLALCHEMY_DATABASE_URI}")
     elif os.environ.get('VERCEL'):
         # Vercel serverless - use temporary SQLite or environment database
         SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:////tmp/muslim_lifestyle.db'
