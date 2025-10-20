@@ -92,38 +92,15 @@ except Exception as e:
     else:
         print("⚠️ Database already registered, continuing...")
 
-# CORS configuration - Allow Railway, local, Render, and Vercel origins
-if os.environ.get('RAILWAY_ENVIRONMENT'):
-    # Railway deployment CORS
-    cors.init_app(app, origins=[
-        "https://*.railway.app",
-        "https://*.up.railway.app",
-        "http://localhost:3000", 
-        "http://127.0.0.1:3000"
-    ])
-elif os.environ.get('VERCEL'):
-    # Vercel deployment CORS
-    cors.init_app(app, origins=[
-        "https://*.vercel.app",
-        "https://muslim-companion.vercel.app",
-        "http://localhost:3000", 
-        "http://127.0.0.1:3000"
-    ])
-elif os.environ.get('RENDER'):
-    # Production CORS - Update with your actual Render frontend URL
-    cors.init_app(app, origins=[
-        "https://*.onrender.com",
-        "http://localhost:3000", 
-        "http://127.0.0.1:3000"
-    ])
-else:
-    # Development CORS
-    cors.init_app(app, origins=[
-        "http://localhost:3000", 
-        "http://127.0.0.1:3000", 
-        "http://localhost:3001", 
-        "http://127.0.0.1:3001"
-    ])
+# CORS configuration - More permissive for troubleshooting
+print("🔗 Configuring CORS...")
+cors.init_app(app, 
+    origins="*",  # Allow all origins for now
+    methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization", "Access-Control-Allow-Credentials"],
+    supports_credentials=True
+)
+print("✅ CORS configured (permissive mode)")
 
 jwt.init_app(app)
 
@@ -134,29 +111,40 @@ try:
 except ImportError:
     from backend.models import User, PrayerTime, RamadanArrangement, Bookmark, UserPreference
 
-# Import routes with Railway compatibility
+# Import routes with Railway compatibility and debugging
 try:
+    print("🔄 Importing routes (local path)...")
     from routes.auth import auth_bp
     from routes.prayer import prayer_bp
     from routes.quran import quran_bp
     from routes.hadith import hadith_bp
     from routes.arrangements import arrangements_bp
     from routes.admin import admin_bp
-except ImportError:
-    from backend.routes.auth import auth_bp
-    from backend.routes.prayer import prayer_bp
-    from backend.routes.quran import quran_bp
-    from backend.routes.hadith import hadith_bp
-    from backend.routes.arrangements import arrangements_bp
-    from backend.routes.admin import admin_bp
+    print("✅ Local route imports successful")
+except ImportError as e:
+    print(f"⚠️ Local route import failed: {e}")
+    print("🔄 Importing routes (backend path)...")
+    try:
+        from backend.routes.auth import auth_bp
+        from backend.routes.prayer import prayer_bp
+        from backend.routes.quran import quran_bp
+        from backend.routes.hadith import hadith_bp
+        from backend.routes.arrangements import arrangements_bp
+        from backend.routes.admin import admin_bp
+        print("✅ Backend route imports successful")
+    except ImportError as e2:
+        print(f"❌ Backend route import also failed: {e2}")
+        raise e2
 
-# Register blueprints
+# Register blueprints with debugging
+print("🔗 Registering blueprints...")
 app.register_blueprint(auth_bp, url_prefix='/api/auth')
 app.register_blueprint(prayer_bp, url_prefix='/api/prayer')
 app.register_blueprint(quran_bp, url_prefix='/api/quran')
 app.register_blueprint(hadith_bp, url_prefix='/api/hadith')
 app.register_blueprint(arrangements_bp, url_prefix='/api/arrangements')
 app.register_blueprint(admin_bp, url_prefix='/api/admin')
+print("✅ All blueprints registered successfully")
 
 # Static file serving for production (Railway)
 @app.route('/', methods=['GET'])
@@ -272,6 +260,48 @@ def health_check():
         'timestamp': datetime.utcnow().isoformat(),
         'environment': 'railway' if os.environ.get('RAILWAY_ENVIRONMENT') else 'development'
     })
+
+@app.route('/api/debug/routes', methods=['GET'])
+def debug_routes():
+    """Debug endpoint to list all registered routes"""
+    routes = []
+    for rule in app.url_map.iter_rules():
+        routes.append({
+            'endpoint': rule.endpoint,
+            'methods': list(rule.methods),
+            'url': str(rule)
+        })
+    return jsonify({
+        'total_routes': len(routes),
+        'routes': sorted(routes, key=lambda x: x['url'])
+    })
+
+# Error handlers
+@app.errorhandler(404)
+def not_found_error(error):
+    """Handle 404 errors with helpful information"""
+    return jsonify({
+        'error': 'Not Found',
+        'message': f'The requested URL {request.url} was not found on the server.',
+        'available_api_endpoints': [
+            '/api/health',
+            '/api/debug/routes',
+            '/api/auth/login',
+            '/api/auth/register', 
+            '/api/quran/chapters',
+            '/api/quran/para/1/surahs',
+            '/api/hadith/collections',
+            '/api/admin/users'
+        ]
+    }), 404
+
+@app.errorhandler(500)
+def internal_error(error):
+    """Handle 500 errors"""
+    return jsonify({
+        'error': 'Internal Server Error',
+        'message': 'An internal server error occurred.'
+    }), 500
 
 # This route is already defined above - no duplicate needed
     
