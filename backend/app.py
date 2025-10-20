@@ -204,51 +204,6 @@ def serve_frontend():
 @app.route('/<path:path>')
 def catch_all(path):
     """Catch-all route for React Router SPA routing"""
-    if os.environ.get('RAILWAY_ENVIRONMENT'):
-        static_folder = os.path.join(app.root_path, 'static')
-        index_path = os.path.join(static_folder, 'index.html')
-        
-        # Serve static assets (JS, CSS, images) if they exist
-        file_path = os.path.join(static_folder, path)
-        if os.path.exists(file_path) and os.path.isfile(file_path):
-            print(f"📄 Serving static file: {path}")
-            return send_from_directory(static_folder, path)
-        
-        # For all other routes, serve React app (SPA routing)
-        if os.path.exists(index_path):
-            print(f"🔄 SPA routing for: {path}")
-            return send_from_directory(static_folder, 'index.html')
-        else:
-            print(f"❌ React build not found for route: {path}")
-            return jsonify({'error': 'React application not built', 'route': path}), 404
-    
-    # Development or fallback API response
-    return jsonify({
-        'message': 'Qareeb Islamic Companion API - Use /api endpoints to access resources',
-        'frontend': 'Run npm run dev in frontend folder for development',
-        'note': 'Frontend static files not found - check build process'
-    })
-
-@app.route('/static/<path:filename>')
-def serve_static(filename):
-    """Serve static files for the frontend"""
-    static_folder = os.path.join(app.root_path, 'static')
-    return send_from_directory(static_folder, filename)
-
-@app.route('/api/health', methods=['GET'])
-def health_check():
-    """Health check endpoint"""
-    return jsonify({
-        'status': 'healthy',
-        'message': 'Qareeb Islamic Companion Backend is running',
-        'timestamp': datetime.utcnow().isoformat(),
-        'environment': 'railway' if os.environ.get('RAILWAY_ENVIRONMENT') else 'development'
-    })
-
-# Catch-all route to handle unknown routes and serve React app
-@app.route('/<path:path>', methods=['GET'])
-def catch_all(path):
-    """Handle unknown routes - serve React app in production or API response in development"""
     # Don't serve frontend for API routes
     if path.startswith('api/'):
         return jsonify({
@@ -266,8 +221,59 @@ def catch_all(path):
     # In production (Railway), serve the React app for all non-API routes
     if os.environ.get('RAILWAY_ENVIRONMENT'):
         static_folder = os.path.join(app.root_path, 'static')
-        if os.path.exists(os.path.join(static_folder, 'index.html')):
+        index_path = os.path.join(static_folder, 'index.html')
+        
+        # Serve static assets (JS, CSS, images) if they exist
+        file_path = os.path.join(static_folder, path)
+        if os.path.exists(file_path) and os.path.isfile(file_path):
+            print(f"📄 Serving static file: {path}")
+            return send_from_directory(static_folder, path)
+        
+        # For all other routes, serve React app (SPA routing)
+        if os.path.exists(index_path):
+            print(f"🔄 SPA routing for: {path}")
             return send_from_directory(static_folder, 'index.html')
+        else:
+            print(f"❌ React build not found for route: {path}")
+            return jsonify({'error': 'React application not built', 'route': path}), 404
+    else:
+        # Development mode - serve React app if built, otherwise inform about dev server
+        static_folder = os.path.join(app.root_path, 'static')
+        index_path = os.path.join(static_folder, 'index.html')
+        
+        if os.path.exists(index_path):
+            # Serve static assets
+            file_path = os.path.join(static_folder, path)
+            if os.path.exists(file_path) and os.path.isfile(file_path):
+                return send_from_directory(static_folder, path)
+            # Serve React app for SPA routing
+            return send_from_directory(static_folder, 'index.html')
+        else:
+            # No React build found - inform about development setup
+            return jsonify({
+                'message': 'Qareeb Islamic Companion API - Development Mode',
+                'frontend': 'Run npm run dev in frontend folder for React development server',
+                'backend': 'API endpoints available under /api/',
+                'note': 'React build not found - use npm run build to create production build'
+            })
+
+@app.route('/static/<path:filename>')
+def serve_static(filename):
+    """Serve static files for the frontend"""
+    static_folder = os.path.join(app.root_path, 'static')
+    return send_from_directory(static_folder, filename)
+
+@app.route('/api/health', methods=['GET'])
+def health_check():
+    """Health check endpoint"""
+    return jsonify({
+        'status': 'healthy',
+        'message': 'Qareeb Islamic Companion Backend is running',
+        'timestamp': datetime.utcnow().isoformat(),
+        'environment': 'railway' if os.environ.get('RAILWAY_ENVIRONMENT') else 'development'
+    })
+
+# This route is already defined above - no duplicate needed
     
     # Development fallback
     return jsonify({
