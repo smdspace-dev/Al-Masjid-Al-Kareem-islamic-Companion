@@ -23,7 +23,7 @@ const getApiBaseUrl = () => {
       return `${window.location.origin}/api`
     }
     // Fallback for Railway production
-    return 'https://al-masjid-al-kareem-islamic-companion-production.up.railway.app/api'
+    return 'https://qareeb.up.railway.app/api'
   }
   
   // Development environment
