@@ -138,13 +138,25 @@ def serve_frontend():
     if os.environ.get('RAILWAY_ENVIRONMENT'):
         # In production, serve the built React app
         static_folder = os.path.join(app.root_path, 'static')
-        if os.path.exists(os.path.join(static_folder, 'index.html')):
+        index_path = os.path.join(static_folder, 'index.html')
+        
+        print(f"🌐 Static folder: {static_folder}")
+        print(f"📁 Static folder exists: {os.path.exists(static_folder)}")
+        print(f"📄 Index.html exists: {os.path.exists(index_path)}")
+        
+        if os.path.exists(static_folder):
+            print(f"📂 Static folder contents: {os.listdir(static_folder)}")
+        
+        if os.path.exists(index_path):
             return send_from_directory(static_folder, 'index.html')
+        else:
+            print("❌ index.html not found, serving API response")
     
     # Development or fallback API response
     return jsonify({
         'message': 'Qareeb Islamic Companion API - Use /api endpoints to access resources',
-        'frontend': 'Run npm run dev in frontend folder for development'
+        'frontend': 'Run npm run dev in frontend folder for development',
+        'note': 'Frontend static files not found - check build process'
     })
 
 @app.route('/static/<path:filename>')
