@@ -4,16 +4,29 @@ nixPkgs = ['nodejs-18_x', 'python311']
 [phases.install]
 cmds = [
     'python --version',
+    'node --version',
+    'npm --version',
     'pip install -r requirements.txt',
-    'cd frontend && npm install'
+    'echo "=== INSTALLING FRONTEND DEPENDENCIES ==="',
+    'cd frontend && npm install --verbose'
 ]
 
 [phases.build]
 cmds = [
-    'echo "=== ENSURING STATIC FILES ==="',
+    'echo "=== BUILDING REACT APPLICATION ==="',
+    'cd frontend && pwd',
+    'cd frontend && ls -la',
+    'cd frontend && npm run build --verbose',
+    'echo "=== CHECKING BUILD OUTPUT ==="',
+    'ls -la frontend/dist/ || echo "No dist directory"',
+    'ls -la frontend/build/ || echo "No build directory"',
+    'echo "=== COPYING REACT BUILD TO BACKEND ==="',
     'mkdir -p backend/static',
+    'rm -rf backend/static/*',
+    'if [ -d "frontend/dist" ]; then cp -r frontend/dist/* backend/static/ && echo "✅ React app copied from dist"; else echo "❌ frontend/dist not found"; fi',
+    'echo "=== VERIFYING STATIC FILES ==="',
     'ls -la backend/static/',
-    'echo "Static directory created"'
+    'if [ -f "backend/static/index.html" ]; then echo "✅ React index.html found"; else echo "❌ React index.html missing"; fi'
 ]
 
 [phases.start]

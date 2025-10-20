@@ -161,90 +161,66 @@ app.register_blueprint(admin_bp, url_prefix='/api/admin')
 # Static file serving for production (Railway)
 @app.route('/', methods=['GET'])
 def serve_frontend():
-    """Serve the frontend"""
+    """Serve the React frontend"""
     if os.environ.get('RAILWAY_ENVIRONMENT'):
-        # In production, serve the static files
+        # In production, serve the React build
         static_folder = os.path.join(app.root_path, 'static')
         index_path = os.path.join(static_folder, 'index.html')
         
         print(f"🌐 Static folder: {static_folder}")
         print(f"📁 Static folder exists: {os.path.exists(static_folder)}")
-        print(f"📄 Index.html exists: {os.path.exists(index_path)}")
+        print(f"📄 React index.html exists: {os.path.exists(index_path)}")
         
         if os.path.exists(static_folder):
             print(f"📂 Static folder contents: {os.listdir(static_folder)}")
         
         if os.path.exists(index_path):
-            print("✅ Serving static index.html")
+            print("✅ Serving React application")
             return send_from_directory(static_folder, 'index.html')
         else:
-            print("❌ index.html not found, creating and serving it now")
-            # Create the static directory if it doesn't exist
-            os.makedirs(static_folder, exist_ok=True)
-            
-            # Create a beautiful index.html file
-            html_content = '''<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Qareeb - Islamic Companion</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; min-height: 100vh; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-        .header { text-align: center; padding: 40px 0; }
-        .title { font-size: 3.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
-        .subtitle { font-size: 1.5em; opacity: 0.9; margin-bottom: 40px; }
-        .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin: 50px 0; }
-        .feature { background: rgba(255, 255, 255, 0.1); padding: 30px; border-radius: 15px; text-align: center; }
-        .feature h3 { color: #ffd700; margin-bottom: 15px; }
-        .admin-panel { background: rgba(255, 215, 0, 0.1); border: 2px solid #ffd700; margin-top: 40px; padding: 30px; border-radius: 15px; text-align: center; }
-        .api-link { background: #ffd700; color: #333; padding: 15px 30px; border-radius: 25px; text-decoration: none; font-weight: bold; margin: 10px; display: inline-block; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1 class="title">🕌 Qareeb</h1>
-            <p class="subtitle">Your Comprehensive Islamic Companion</p>
-        </div>
-        <div class="features">
-            <div class="feature">
-                <h3>🕌 Prayer Times</h3>
-                <p>Get accurate prayer times based on your location.</p>
-            </div>
-            <div class="feature">
-                <h3>📖 Quran Reader</h3>
-                <p>Read the Holy Quran with beautiful typography.</p>
-            </div>
-            <div class="feature">
-                <h3>📚 Hadith Collection</h3>
-                <p>Explore authentic Hadith collections.</p>
-            </div>
-            <div class="feature">
-                <h3>🌙 Islamic Calendar</h3>
-                <p>Stay updated with important Islamic dates.</p>
-            </div>
-        </div>
-        <div class="admin-panel">
-            <h3>👤 Admin Access</h3>
-            <p><strong>Email:</strong> ahilxdesigns@gmail.com</p>
-            <p><strong>Password:</strong> Qareeb@2025</p>
-        </div>
-        <div style="text-align: center; margin-top: 50px;">
-            <a href="/api/health" class="api-link">API Health</a>
-            <a href="/api/auth/login" class="api-link">Login</a>
-        </div>
-    </div>
-</body>
-</html>'''
-            
-            # Write the file
-            with open(index_path, 'w', encoding='utf-8') as f:
-                f.write(html_content)
-            
-            print("✅ Created and serving new index.html")
+            print("❌ React build not found - check build logs")
+            return jsonify({
+                'error': 'React application not built',
+                'message': 'React build failed during deployment',
+                'solution': 'Check Railway build logs for frontend build errors',
+                'api_available': True,
+                'endpoints': {
+                    'health': '/api/health',
+                    'auth': '/api/auth/login',
+                    'prayer': '/api/prayer',
+                    'quran': '/api/quran'
+                }
+            }), 503
+    else:
+        # In development mode, return a message for React dev server
+        return jsonify({
+            'message': 'Development mode - start React dev server on port 5173',
+            'backend_port': '5001',
+            'react_dev_command': 'cd frontend && npm run dev'
+        })
+
+
+# Catch-all route to serve React routes (SPA routing)
+@app.route('/<path:path>')
+def catch_all(path):
+    """Catch-all route for React Router SPA routing"""
+    if os.environ.get('RAILWAY_ENVIRONMENT'):
+        static_folder = os.path.join(app.root_path, 'static')
+        index_path = os.path.join(static_folder, 'index.html')
+        
+        # Serve static assets (JS, CSS, images) if they exist
+        file_path = os.path.join(static_folder, path)
+        if os.path.exists(file_path) and os.path.isfile(file_path):
+            print(f"📄 Serving static file: {path}")
+            return send_from_directory(static_folder, path)
+        
+        # For all other routes, serve React app (SPA routing)
+        if os.path.exists(index_path):
+            print(f"🔄 SPA routing for: {path}")
             return send_from_directory(static_folder, 'index.html')
+        else:
+            print(f"❌ React build not found for route: {path}")
+            return jsonify({'error': 'React application not built', 'route': path}), 404
     
     # Development or fallback API response
     return jsonify({
