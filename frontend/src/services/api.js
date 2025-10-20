@@ -9,12 +9,21 @@ const getApiBaseUrl = () => {
   
   // Check if we're in production
   if (import.meta.env.MODE === 'production') {
-    // Check if we're on Vercel
-    if (typeof window !== 'undefined' && window.location.hostname.includes('vercel.app')) {
+    // For Railway deployment, use the same origin since backend and frontend are served together
+    if (typeof window !== 'undefined') {
+      // Check for Railway deployment
+      if (window.location.hostname.includes('railway.app')) {
+        return `${window.location.origin}/api`
+      }
+      // Check for Vercel deployment
+      if (window.location.hostname.includes('vercel.app')) {
+        return `${window.location.origin}/api`
+      }
+      // Default: use same origin (for Railway, Render, etc.)
       return `${window.location.origin}/api`
     }
-    // Default production URL (Render or other)
-    return 'https://your-backend.onrender.com'
+    // Fallback for Railway production
+    return 'https://al-masjid-al-kareem-islamic-companion-production.up.railway.app/api'
   }
   
   // Development environment
