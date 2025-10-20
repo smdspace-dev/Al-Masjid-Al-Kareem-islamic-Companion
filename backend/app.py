@@ -70,7 +70,16 @@ if os.environ.get('RAILWAY_ENVIRONMENT'):
     print(f"Final DB URI: {db_uri[:50]}...")
 
 # Initialize extensions with app
-db.init_app(app)
+try:
+    db.init_app(app)
+    print("✅ Database initialized successfully")
+except Exception as e:
+    print(f"❌ Database initialization failed: {e}")
+    print("🔄 Attempting SQLite fallback...")
+    # Force SQLite fallback
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///emergency_fallback.db'
+    db.init_app(app)
+    print("✅ SQLite fallback initialized")
 
 # CORS configuration - Allow Railway, local, Render, and Vercel origins
 if os.environ.get('RAILWAY_ENVIRONMENT'):

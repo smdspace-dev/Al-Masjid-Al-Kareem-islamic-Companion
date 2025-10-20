@@ -34,11 +34,17 @@ class Config:
                 print("⚠️ No database connection found, using SQLite fallback for Railway")
                 SQLALCHEMY_DATABASE_URI = 'sqlite:///railway_fallback.db'
         else:
-            if SQLALCHEMY_DATABASE_URI.startswith('postgres://'):
-                # Fix for SQLAlchemy 1.4+ compatibility
-                SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI.replace('postgres://', 'postgresql://', 1)
+            # Try PostgreSQL first, fallback to SQLite if psycopg2 fails
+            try:
+                if SQLALCHEMY_DATABASE_URI.startswith('postgres://'):
+                    # Fix for SQLAlchemy 1.4+ compatibility
+                    SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI.replace('postgres://', 'postgresql://', 1)
+                print(f"🚂 Railway Database (PostgreSQL): {SQLALCHEMY_DATABASE_URI[:50]}...")
+            except Exception as e:
+                print(f"⚠️ PostgreSQL connection failed, using SQLite: {e}")
+                SQLALCHEMY_DATABASE_URI = 'sqlite:///railway_fallback.db'
         
-        print(f"🚂 Railway Database: {SQLALCHEMY_DATABASE_URI[:50]}...")
+        print(f"🚂 Final Railway Database: {SQLALCHEMY_DATABASE_URI[:50]}...")
     elif os.environ.get('VERCEL'):
         # Vercel serverless - use temporary SQLite or environment database
         SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:////tmp/muslim_lifestyle.db'
