@@ -7,19 +7,15 @@ const getApiBaseUrl = () => {
     return import.meta.env.VITE_API_URL
   }
   
-  // Check if we're in production
+  // If we're on Railway in the browser, always use Railway API
+  if (typeof window !== 'undefined' && window.location.hostname.includes('railway.app')) {
+    return `${window.location.origin}/api`
+  }
+  
+  // Check if we're in production mode
   if (import.meta.env.MODE === 'production') {
-    // For Railway deployment, use the same origin since backend and frontend are served together
+    // For any production deployment, use same origin first
     if (typeof window !== 'undefined') {
-      // Check for Railway deployment
-      if (window.location.hostname.includes('railway.app')) {
-        return `${window.location.origin}/api`
-      }
-      // Check for Vercel deployment
-      if (window.location.hostname.includes('vercel.app')) {
-        return `${window.location.origin}/api`
-      }
-      // Default: use same origin (for Railway, Render, etc.)
       return `${window.location.origin}/api`
     }
     // Fallback for Railway production
@@ -31,6 +27,12 @@ const getApiBaseUrl = () => {
 }
 
 const API_BASE_URL = getApiBaseUrl()
+
+// Debug logging
+console.log('🌐 API Configuration:')
+console.log('  Mode:', import.meta.env.MODE)
+console.log('  Hostname:', typeof window !== 'undefined' ? window.location.hostname : 'SSR')
+console.log('  API Base URL:', API_BASE_URL)
 
 // Create axios instance with better error handling
 const api = axios.create({
