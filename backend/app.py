@@ -59,6 +59,13 @@ if os.environ.get('RAILWAY_ENVIRONMENT'):
     print(f"DATABASE_URL: {'✅ Set' if os.environ.get('DATABASE_URL') else '❌ Missing'}")
     print(f"SECRET_KEY: {'✅ Set' if os.environ.get('SECRET_KEY') else '❌ Missing'}")
     print(f"JWT_SECRET_KEY: {'✅ Set' if os.environ.get('JWT_SECRET_KEY') else '❌ Missing'}")
+    
+    # Print all environment variables containing 'DATABASE' or 'POSTGRES'
+    print("🔍 Database-related environment variables:")
+    for key, value in os.environ.items():
+        if any(keyword in key.upper() for keyword in ['DATABASE', 'POSTGRES', 'PG']):
+            print(f"  {key}: {value[:50]}...")
+    
     db_uri = app.config.get('SQLALCHEMY_DATABASE_URI', 'Not set')
     print(f"Final DB URI: {db_uri[:50]}...")
 
