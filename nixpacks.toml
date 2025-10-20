@@ -14,23 +14,22 @@ cmds = [
 [phases.build]
 cmds = [
     'echo "=== BUILDING REACT APPLICATION ==="',
-    'cd frontend && pwd',
-    'cd frontend && ls -la',
-    'cd frontend && npm run build --verbose',
+    'cd frontend && pwd && ls -la',
+    'cd frontend && NODE_ENV=production npm run build',
     'echo "=== CHECKING BUILD OUTPUT ==="',
-    'ls -la frontend/dist/ || echo "No dist directory"',
-    'ls -la frontend/build/ || echo "No build directory"',
+    'ls -la frontend/dist/ || echo "No dist directory found"',
     'echo "=== COPYING REACT BUILD TO BACKEND ==="',
     'mkdir -p backend/static',
     'rm -rf backend/static/*',
-    'if [ -d "frontend/dist" ]; then cp -r frontend/dist/* backend/static/ && echo "✅ React app copied from dist"; else echo "❌ frontend/dist not found"; fi',
-    'echo "=== VERIFYING STATIC FILES ==="',
+    'cp -r frontend/dist/* backend/static/',
+    'echo "=== VERIFYING COPIED FILES ==="',
     'ls -la backend/static/',
-    'if [ -f "backend/static/index.html" ]; then echo "✅ React index.html found"; else echo "❌ React index.html missing"; fi'
+    'echo "=== FINAL VERIFICATION ==="',
+    'if [ -f "backend/static/index.html" ]; then echo "✅ SUCCESS: React build copied successfully"; else echo "❌ ERROR: React index.html missing"; exit 1; fi'
 ]
 
 [phases.start]
-cmd = 'gunicorn backend.app:app --bind 0.0.0.0:$PORT'
+cmd = 'cd backend && gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --timeout 60'
 
 [variables]
 NODE_ENV = 'production'
