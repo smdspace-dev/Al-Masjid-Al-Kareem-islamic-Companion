@@ -1,38 +1,23 @@
 import axios from 'axios'
 
-// Set base URL for API calls - Environment aware
+// Set base URL for API calls - FIXED for Railway deployment
 const getApiBaseUrl = () => {
-  // Check if we have an explicit API URL set (Vite uses import.meta.env)
-  if (import.meta.env.VITE_API_URL) {
-    return import.meta.env.VITE_API_URL
-  }
-  
-  // If we're on Railway in the browser, always use Railway API
-  if (typeof window !== 'undefined' && window.location.hostname.includes('railway.app')) {
-    return `${window.location.origin}/api`
-  }
-  
-  // Check if we're in production mode
-  if (import.meta.env.MODE === 'production') {
-    // For any production deployment, use same origin first
-    if (typeof window !== 'undefined') {
-      return `${window.location.origin}/api`
-    }
-    // Fallback for Railway production
+  // For Railway production - ALWAYS use Railway URL when built
+  if (import.meta.env.PROD) {
     return 'https://qareeb.up.railway.app/api'
   }
   
-  // Development environment
+  // Development environment only
   return 'http://localhost:5000'
 }
 
 const API_BASE_URL = getApiBaseUrl()
 
-// Debug logging
-console.log('🌐 API Configuration:')
-console.log('  Mode:', import.meta.env.MODE)
-console.log('  Hostname:', typeof window !== 'undefined' ? window.location.hostname : 'SSR')
+// Debug logging - SIMPLIFIED
+console.log('🌐 Qareeb API Configuration:')
+console.log('  Production Mode:', import.meta.env.PROD)
 console.log('  API Base URL:', API_BASE_URL)
+console.log('  Should use Railway API:', import.meta.env.PROD ? 'YES' : 'NO (localhost)')
 
 // Create axios instance with better error handling
 const api = axios.create({
