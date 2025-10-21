@@ -276,6 +276,22 @@ def debug_routes():
         'routes': sorted(routes, key=lambda x: x['url'])
     })
 
+@app.route('/api/debug/init-db', methods=['POST'])
+def init_database():
+    """Force initialize database tables - for debugging"""
+    try:
+        print("🔧 Force initializing database...")
+        create_tables()
+        return jsonify({
+            'status': 'success',
+            'message': 'Database tables initialized successfully'
+        })
+    except Exception as e:
+        return jsonify({
+            'status': 'error',
+            'message': f'Database initialization failed: {str(e)}'
+        }), 500
+
 # Error handlers
 @app.errorhandler(404)
 def not_found_error(error):
@@ -349,8 +365,10 @@ def internal_error(error):
 
 def create_tables():
     """Create database tables"""
+    print("🏗️ Starting database table creation...")
+    
     # Ensure instance directory exists for local development
-    if not os.environ.get('RENDER') and not os.environ.get('VERCEL'):
+    if not os.environ.get('RENDER') and not os.environ.get('VERCEL') and not os.environ.get('RAILWAY_ENVIRONMENT'):
         instance_dir = os.path.join(os.path.dirname(__file__), 'instance')
         if not os.path.exists(instance_dir):
             os.makedirs(instance_dir)
@@ -361,32 +379,48 @@ def create_tables():
         import tempfile
         os.makedirs('/tmp', exist_ok=True)
     
-    with app.app_context():
-        db.create_all()
-        print("✅ Database tables created successfully!")
+    try:
+        with app.app_context():
+            # Force create all tables
+            print("🗄️ Creating database tables...")
+            db.create_all()
+            print("✅ Database tables created successfully!")
 
-        # Create default admin user
-        if not User.query.filter_by(username='ahilxdesigns@gmail.com').first():
-            admin_user = User(
-                username='ahilxdesigns@gmail.com',
-                email='ahilxdesigns@gmail.com',
-                password_hash=generate_password_hash('Qareeb@2025'),
-                role='admin'
-            )
-            db.session.add(admin_user)
+            # Create default admin user
+            print("👤 Creating default admin user...")
+            if not User.query.filter_by(username='ahilxdesigns@gmail.com').first():
+                admin_user = User(
+                    username='ahilxdesigns@gmail.com',
+                    email='ahilxdesigns@gmail.com',
+                    password_hash=generate_password_hash('Qareeb@2025'),
+                    role='admin'
+                )
+                db.session.add(admin_user)
+                print("✅ Admin user created")
+            else:
+                print("ℹ️ Admin user already exists")
 
-        # Create default arranger user
-        if not User.query.filter_by(username='organizer1').first():
-            organizer_user = User(
-                username='organizer1',
-                email='org1@muslim-app.com',
-                password_hash=generate_password_hash('org123'),
-                role='arranger'
-            )
-            db.session.add(organizer_user)
+            # Create default arranger user
+            print("👤 Creating default organizer user...")
+            if not User.query.filter_by(username='organizer1').first():
+                organizer_user = User(
+                    username='organizer1',
+                    email='org1@muslim-app.com',
+                    password_hash=generate_password_hash('org123'),
+                    role='arranger'
+                )
+                db.session.add(organizer_user)
+                print("✅ Organizer user created")
+            else:
+                print("ℹ️ Organizer user already exists")
 
-        db.session.commit()
-        print("✅ Default users created successfully!")
+            db.session.commit()
+            print("✅ Default users created successfully!")
+            
+    except Exception as e:
+        print(f"❌ Error creating database tables: {e}")
+        db.session.rollback()
+        raise e
 
 def start_frontend_server():
     """Start the React frontend development server"""
