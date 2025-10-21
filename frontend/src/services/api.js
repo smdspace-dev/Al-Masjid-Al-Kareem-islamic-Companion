@@ -1,31 +1,32 @@
 import axios from 'axios'
 
-// Set base URL for API calls - FIXED for Railway deployment
+// Set base URL for API calls - Environment aware
 const getApiBaseUrl = () => {
-  // For Railway production - ALWAYS use Railway URL when built
-  if (import.meta.env.PROD) {
-    return 'https://qareeb.up.railway.app/api'
+  // Always use explicit Railway API URL in production
+  if (typeof window !== 'undefined' && window.location.hostname === 'qareeb.up.railway.app') {
+    return 'https://qareeb.up.railway.app/api';
   }
-  
-  // Development environment only
-  return 'http://localhost:5000'
+  // Use VITE_API_URL if set (for local dev or other deployments)
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+  // Development environment
+  return 'http://localhost:5000';
 }
 
-const API_BASE_URL = getApiBaseUrl()
+const API_BASE_URL = getApiBaseUrl();
 
-// Debug logging - SIMPLIFIED
-console.log('🌐 Qareeb API Configuration:')
-console.log('  Production Mode:', import.meta.env.PROD)
+// Debug logging
+console.log('🌐 API Configuration:')
+console.log('  Hostname:', typeof window !== 'undefined' ? window.location.hostname : 'SSR')
 console.log('  API Base URL:', API_BASE_URL)
-console.log('  Should use Railway API:', import.meta.env.PROD ? 'YES' : 'NO (localhost)')
 
 // Create axios instance with better error handling
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json'
-  },
-  timeout: 10000
+  }
 })
 
 // Add request interceptor to include auth token
