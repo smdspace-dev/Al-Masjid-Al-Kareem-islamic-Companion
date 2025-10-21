@@ -1,20 +1,7 @@
 import axios from 'axios'
 
-// Set base URL for API calls - Environment aware
-const getApiBaseUrl = () => {
-  // Always use explicit Railway API URL in production
-  if (typeof window !== 'undefined' && window.location.hostname === 'qareeb.up.railway.app') {
-    return 'https://qareeb.up.railway.app/api';
-  }
-  // Use VITE_API_URL if set (for local dev or other deployments)
-  if (import.meta.env.VITE_API_URL) {
-    return import.meta.env.VITE_API_URL;
-  }
-  // Development environment
-  return 'http://localhost:5000';
-}
-
-const API_BASE_URL = getApiBaseUrl();
+// Production API URL - hardcoded for Railway deployment
+const API_BASE_URL = 'https://qareeb.up.railway.app/api'
 
 // Debug logging
 console.log('🌐 API Configuration:')
