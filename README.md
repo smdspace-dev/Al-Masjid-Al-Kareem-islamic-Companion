@@ -1,6 +1,16 @@
 # 🕌 Qareeb
 
->Islamic companion application providing essential tools for Muslim daily life, featuring prayer times, Quran reading, and community features.
+![Python](https://img.shields.io/badge/Python-3.8%2B-blue?logo=python)
+![Flask](https://img.shields.io/badge/Flask-2.3.3-black?logo=flask)
+![React](https://img.shields.io/badge/React-18-blue?logo=react)
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.4-teal?logo=tailwindcss)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Database-blue?logo=postgresql)
+![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
+![Deployed on Render](https://img.shields.io/badge/Deployed%20on-Render-3f72af?logo=render)
+
+> **Qareeb** islamic lifestyle and prayer companion app that brings together the essentials of Muslim daily life — including Quran reading, prayer times, Hadith collections, community Ramadan arrangements, and more — all within a rich, beautifully designed interface inspired by traditional Islamic art and architecture.
+
+It’s built using **Flask** for the backend and **React + TailwindCSS** for the frontend, offering a smooth, fast, and elegant user experience across both mobile and desktop devices.
 
 ## ✨ Latest Updates (January 2025)
 
@@ -401,7 +411,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🆘 Support & Contact
 
 - **Issues**: Create an issue on GitHub
-- **Email**: support@al-masjid-al-kareem.com
+- **Email**: ahilxdesigns@gmail.com
 - **Documentation**: Check the `/docs` folder
 - **Community**: Join our Discord server
 
@@ -430,3 +440,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 *"And whoever relies upon Allah - then He is sufficient for him. Indeed, Allah will accomplish His purpose."* - Quran 65:3
 
 Made with ❤️ for the Muslim Ummah 
+Miantained and developed by Smpspace-dev
