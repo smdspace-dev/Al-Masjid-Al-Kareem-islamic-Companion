@@ -6,7 +6,7 @@
 ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.4-teal?logo=tailwindcss)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Database-blue?logo=postgresql)
 ![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
-![Deployed on Render](https://img.shields.io/badge/Deployed%20on-Render-3f72af?logo=render)
+![Deployed on Render](https://img.shields.io/badge/Deployed%20on-Railway-3f72af?logo=render)
 
 > **Qareeb** islamic lifestyle and prayer companion app that brings together the essentials of Muslim daily life — including Quran reading, prayer times, Hadith collections, community Ramadan arrangements, and more — all within a rich, beautifully designed interface inspired by traditional Islamic art and architecture.
 
